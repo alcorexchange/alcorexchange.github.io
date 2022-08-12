@@ -337,13 +337,20 @@
             <a href="#node-api" class="toc-h1 toc-link" data-title="Node API">Node API</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#place-order" class="toc-h2 toc-link" data-title="Place order">Place order</a>
+                    <a href="#eosjs-setup" class="toc-h2 toc-link" data-title="Setting up EOSJS">Setting up EOSJS</a>
+                  </li>
+
+                  <li>
+                    <a href="#place-orders" class="toc-h2 toc-link" data-title="Place market order">Place Market order</a>
                   </li>
                   <li>
                     <a href="#place-multiple-orders" class="toc-h2 toc-link" data-title="Place multiple orders">Place multiple orders</a>
                   </li>
                   <li>
-                    <a href="#cancel-order" class="toc-h2 toc-link" data-title="Cancel order">Cancel order</a>
+                    <a href="#cancel-buy" class="toc-h2 toc-link" data-title="Cancel order">Cancel buy order</a>
+                  </li>
+                  <li>
+                    <a href="#cancel-sell" class="toc-h2 toc-link" data-title="Cancel order">Cancel sell order</a>
                   </li>
               </ul>
           </li>
@@ -359,10 +366,10 @@
 
 <ul>
 <li>Interaction with the contract. <strong>(Node API)</strong></li>
-<li>Obtaining information about the markets using the Bakend API services. <strong>(Bakend API)</strong></li>
+<li>Obtaining information about the markets using the Backend API services. <strong>(Backend API)</strong></li>
 </ul>
 <h1 id='backend-api'>Backend API</h1>
-<p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
+<p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderbooks, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.</p>
 <h4 id='url-structure'>URL Structure</h4>
 <p>HTTP API URL are separated by chains using following structute.
@@ -393,7 +400,7 @@ The UI are following same structute as api, they are splitted by subdomains name
 </tbody></table>
 
 <aside class="notice">
-All timestamp's are expected to be in milliseconds
+All timestamps are expected to be in milliseconds.
 </aside>
 <h2 id='get-tickers'>Get Tickers</h2>
 <p>Endpoint provides pricing and volume information on each market pair available on an exchange.</p>
@@ -439,7 +446,7 @@ example: <b>RDA-deadcitytokn_WAX-eosio.token</b></p>
 <td>Array of ticker_id&#39;s, for getting only selected tickers</td>
 </tr>
 </tbody></table>
-<h3 id='responce'>Responce</h3>
+<h3 id='response'>Response</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -485,7 +492,7 @@ example: <b>RDA-deadcitytokn_WAX-eosio.token</b></p>
 </span></code></pre></div>
 <p>Token symbol repesented as <b>SYMBOL_contract</b>
 following the eosio.token standard. As the one symbol can be deployed by multiple contracts.</p>
-<h3 id='responce-2'>Responce</h3>
+<h3 id='response-2'>Response</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -511,7 +518,7 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 </tbody></table>
 <h3 id='http-request-2'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/pairs</code></p>
-<h2 id='get-orderbook'>Get Orderbook</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://alcor.exchange/api/v2/orderbook/pgl-prospectorsw_wax-eosio.token?depth=10"</span>
+<h2 id='get-orderbook'>Get Orderbook</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://alcor.exchange/api/v2/orderbook/?ticker_id=pgl-prospectorsw_wax-eosio.token&depth=10"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -520,30 +527,30 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
     </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PGL-prospectorsw_WAX-eosio.token"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"asks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"0.66299999"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">PRICE</span><span class="w">
-            </span><span class="s2">"111.8101"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">QTY</span><span class="w">
+            </span><span class="s2">"unit_price: 0.66299999"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">PRICE</span><span class="w">
+            </span><span class="s2">"order_size: 111.8101"</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">QTY</span><span class="w">
         </span><span class="p">],</span><span class="w">
         </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"0.66300000"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"237.5000"</span><span class="w">
+            </span><span class="s2">"unit_price: 0.66300000"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"order_size 237.5000"</span><span class="w">
         </span><span class="p">],</span><span class="w">
         </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"0.66400000"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"500.0000"</span><span class="w">
+            </span><span class="s2">"unit_price: 0.66400000"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"order_size: 500.0000"</span><span class="w">
         </span><span class="p">],</span><span class="w">
     </span><span class="p">],</span><span class="w">
     </span><span class="nl">"bids"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"0.64800031"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"74.51997085"</span><span class="w">
+            </span><span class="s2">"unit_price: 0.64800031"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"order_size: 74.51997085"</span><span class="w">
         </span><span class="p">],</span><span class="w">
         </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"0.64800030"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"87.64158563"</span><span class="w">
+            </span><span class="s2">"unit_price: 0.64800030"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"order_size: 87.64158563"</span><span class="w">
         </span><span class="p">],</span><span class="w">
         </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"0.64598927"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"150.00000000"</span><span class="w">
+            </span><span class="s2">"unit_price: 0.64598927"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"order_size: 150.00000000"</span><span class="w">
         </span><span class="p">],</span><span class="w">
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -567,7 +574,7 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <td>The number of market depth to return on each side</td>
 </tr>
 </tbody></table>
-<h3 id='responce-3'>Responce</h3>
+<h3 id='response-3'>Response</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -581,43 +588,43 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <td>Identifier of a ticker with delimiter to separate base/target</td>
 </tr>
 <tr>
-<td>bids</td>
-<td>array</td>
-<td>Array of bids. bid structure: [price, quantity]</td>
-</tr>
-<tr>
 <td>asks</td>
 <td>array</td>
-<td>Array of asks. ask structure: [price, quantity]</td>
+<td>Array of asks. ask structure: [unit_price, order_size]</td>
+</tr>
+<tr>
+<td>bids</td>
+<td>array</td>
+<td>Array of bids. bid structure: [unit_price, order_size]</td>
 </tr>
 </tbody></table>
 <h2 id='get-latest-trades'>Get Latest Trades</h2>
 <p>Retrieve the most recent deals of a ticker, sorted by time from latest to oldest.</p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades"</span>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://alcor.exchange/api/v2/tickers/PGL-prospectorsw_WAX-eosio.token/latest_trades?limit=2"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">48.8126</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.604955</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">29.52941386</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637929769500</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"trade_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"61a0fd5b5f0f4674848b26ae"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">202.0293</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.4949777</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">99.99999825</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1620979002500</span><span class="p">,</span><span class="w">
         </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"buy"</span><span class="w">
+        </span><span class="nl">"trade_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"62f6b5934614f4529c5012d0"</span><span class="p">,</span><span class="w"> 
     </span><span class="p">},</span><span class="w">
     </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">12.9939</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.60495104</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">7.86070962</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637929668000</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"trade_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"61a0fcf65f0f4674848b0cf4"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sell"</span><span class="w">
+        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">202.0293</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.4949777</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">99.99999825</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1620979002500</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"buy"</span><span class="w">
+        </span><span class="nl">"trade_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"62f6b5914614f4529c5010d9"</span><span class="p">,</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div><h3 id='http-request-4'>HTTP Request</h3>
-<p><code>GET http://alcor.exchange/api/v2/orderbook/:ticker_id</code></p>
+<p><code>GET http://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades</code></p>
 <h3 id='query-parameters-3'>Query Parameters</h3>
 <table><thead>
 <tr>
@@ -632,6 +639,45 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <td>false</td>
 <td>300</td>
 <td>The number of latest trades to return</td>
+</tr>
+</tbody></table>
+<h3 id='response-4'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>base_volume</td>
+<td>decimal</td>
+<td>Transaction amount in base pair volume</td>
+</tr>
+<tr>
+<td>price</td>
+<td>decimal</td>
+<td>Transaction price.</td>
+</tr>
+<tr>
+<td>target_volume</td>
+<td>decimal</td>
+<td>Transaction amount in target pair volume.</td>
+</tr>
+<tr>
+<td>time</td>
+<td>timestamp</td>
+<td>Unix timestamp in milliseconds for when the transaction occurred.</td>
+</tr>
+<tr>
+<td>type</td>
+<td>string</td>
+<td>Used to determine the type of the transaction that was completed.</td>
+<tr>
+<td>trade_id</td>
+<td>string</td>
+<td>A unique ID associated with the trade for the currency pair transaction</td>
+</tr>
 </tr>
 </tbody></table>
 <h2 id='get-trade-history'>Get Trade history</h2>
@@ -699,7 +745,7 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <td>End time for historical trades</td>
 </tr>
 </tbody></table>
-<h3 id='responce-4'>Responce</h3>
+<h3 id='response-4'>Response</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -793,7 +839,63 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 </tr>
 </tbody></table>
 <h2 id='get-pools-swap-page'>Get pools (Swap page)</h2>
-<p>TODO</p>
+<p>Provides ** on each pool pair available at the SWAP </p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/pools"</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"pair_id"</span><span class="p">:</span><span class="mf">2170.14554774</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"pool1"</span><span class="p">:</span><span class="mf">0.06173</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"pool2"</span><span class="p">:</span><span class="mf">0.062</span><span class="p">,</span><span class="w">
+          {"id":0,"supply":"238905.991983 WAXTLM","pool1":{"quantity":"360213.89704183 WAX","contract":"eosio.token"},"pool2":{"quantity":"1288005.1649 TLM","contract":"alien.worlds"}
+    </span><span class="p">}</span><span class="w">
+
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div><h3 id='query-parameters-5'>Query Parameters</h3>
+<p>from, to, resolution, limit</p>
+
+<table><thead>
+  <tr>
+  <th>Parameter</th>
+  <th>Mandatory</th>
+  <th>Type</th>
+  <th>Description</th>
+  </tr>
+  </thead><tbody>
+  <tr>
+  <td>pair_id</td>
+  <td>false</td>
+  <td>integer</td>
+  <td>Array of ticker_id&#39;s, for getting only selected tickers</td>
+  </tr>
+  </tbody></table>
+  <h3 id='response'>Response</h3>
+  <table><thead>
+  <tr>
+  <th>Name</th>
+  <th>Type</th>
+  <th>Description</th>
+  </tr>
+  </thead><tbody>
+  <tr>
+  <td>pair_id</td>
+  <td>string</td>
+  <td>Identifier of a ticker with delimiter to separate base/target</td>
+  </tr>
+  <tr>
+  <td>base</td>
+  <td>string</td>
+  <td>Symbol code of a the base cryptoasset PIXEL</td>
+  </tr>
+  <tr>
+  <td>target</td>
+  <td>string</td>
+  <td>Symbol code of the target cryptoasset WAX</td>
+  </tr>
+  </tbody></table>
 <h2 id='get-pool-charts'>Get Pool charts</h2>
 <p>TOD</p>
 <h1 id='node-api'>Node API</h1>
@@ -810,13 +912,165 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 
 <p>You can easly interacting with alcor contracts using <strong><a href="https://github.com/EOSIO/eosjs">EOSJS library</a></strong>. </p>
 
+<h3 id='eosjs-setup'>Setting up EOSJS</h3>
+<p>
+  <code>
+    import fetch from 'node-fetch'; <br>
+    import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs' <br> 
+    const rpc = new JsonRpc('https://wax.greymass.com', { fetch })  <br>
+    const signatureProvider = new JsSignatureProvider(['private key of order owner']) <br>
+    const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() }); <br/>
+  </code>
+</p>
+
 <aside class="notice">
 <b>ATTENTION!</b> Due the legacy codebase of dex smart contract, the <b>base</b> and <b>quote</b> are mixed up in places.
 So in the market table on dex contract, the <b>base_token</b> is actually <b>quote_token</b> and vice versa.
 </aside>
-<h2 id='place-order'>Place order</h2>
-<p>TODO</p>
-<h2 id='place-multiple-orders'>Place multiple orders</h2><h2 id='cancel-order'>Cancel order</h2>
+
+
+
+
+<div id = 'place-orders'></div>
+<h2 id='place-market-order'>Place market order</h2>
+<p><code>
+  // Place buy limit order, buying 1000 TLM for 10 WAX <br>
+  const objTrans = [{                                  <br>
+    account: 'eosio', // token contract<br>
+    name: 'transfer',<br>
+    authorization: [{<br>
+      actor: 'useraaaaaaaa', // account placing order (owner)<br>
+      permission: 'active',<br>
+    }],<br>
+    data: {<br>
+      from: 'useraaaaaaaa',<br>
+      to: 'alcordexmain',<br>
+      quantity: `10.0000 WAX`,<br>
+      memo: `1000.0000 TLM@alien.worlds`<br>
+    }<br>
+  }]</code><br>
+  <br>
+
+  <h3 id='response'>Transaction Result</h3><br>
+  <p><code>
+  const r = await api.transact(objTrans, { blocksBehind: 3, expireSeconds: 30})<br>
+</code></p>
+
+<h2 id='place-swap-order'>Place swap order</h2>
+<p> Place buy limit order, buying 1000 TLM for 10 WAX</p>
+  <blockquote>
+    <p>The described transaction returns </p>
+    </blockquote>
+    <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            TODO
+        </span><span class="p">}</span><span class="w">
+        </span>
+    <span class="p">]</span><span class="w">
+    </span></code></pre></div>
+    <p>
+  
+  <code>
+  const objTrans = [{                                  <br>
+    account: 'eosio', // token contract<br>
+    name: 'transfer',<br>
+    authorization: [{<br>
+      actor: 'useraaaaaaaa', // account placing order (owner)<br>
+      permission: 'active',<br>
+    }],<br>
+    data: {<br>
+      from: 'useraaaaaaaa',<br>
+      to: 'alcordexmain',<br>
+      quantity: `10.0000 WAX`,<br>
+      memo: `1000.0000 TLM@alien.worlds`<br>
+    }<br>
+  }]</code><br>
+  <br>
+
+  <h3 id='response'>Transaction Result</h3><br>
+  <p><code>
+  const r = await api.transact(objTrans, { blocksBehind: 3, expireSeconds: 30})<br>
+</code></p>
+
+<h2 id='place-multiple-orders'>Place multiple orders</h2>
+<p>
+ TODO</p>
+
+<h2 id='cancel-buy'>Cancel buy order</h2>
+<p>Cancel buy order 12345 from market number 26 <br> <br>
+
+  <blockquote>
+    <p>The described transaction returns </p>
+    </blockquote>
+    
+    <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            TODO
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+    </span></code></pre></div>
+    <p>
+  <code>
+    const objTrans = [{                                  <br>
+      account: 'alcordexmain', // exchange contract<br>
+      name: 'cancellbuy',<br>
+      authorization: [{<br>
+        actor: 'useraaaaaaaa', // account placing order (owner)<br>
+        permission: 'active',<br>
+      }],<br>
+      data: { <br>
+        executor: 'useraaaaaaaa', <br>
+        market_id: 26, // WAX - TLM@ alien.worlds market <br>
+        order_id: 12345, // id of the order initially placed <br>
+      } <br>
+    }] </code><br>
+    <br>
+  </p>
+
+  <h3 id='response'>Transaction Result</h3><br>
+  <p><code>
+  const r = await api.transact(objTrans, { blocksBehind: 3, expireSeconds: 30})<br>
+</code></p>
+
+<h2 id='cancel-sell'>Cancel sell order</h2>
+<p> Cancel sell order 12345 from market number 26<br><br>
+  
+
+  <blockquote>
+  <p>The described transaction returns </p>
+  </blockquote>
+  <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+          TODO
+      </span><span class="p">}</span><span class="w">
+      </span>
+  <span class="p">]</span><span class="w">
+  </span></code></pre></div>
+  <p>
+  <code>
+   
+  const objTrans = [{                                  <br>
+    account: 'alcordexmain', // exchange contract<br>
+    name: 'cancelsell',<br>
+    authorization: [{<br>
+      actor: 'useraaaaaaaa', // account placing order (owner)<br>
+      permission: 'active',<br>
+    }],<br>
+    data: { <br>
+      executor: 'useraaaaaaaa', <br> 
+      market_id: 26, // WAX - TLM@ alien.worlds market<br>
+      order_id: 12345, // id of the order initially placed<br>
+    }<br>
+  }]</code><br>
+  <br>
+
+  <h3 id='response'>Transaction Result</h3><br>
+  <p><code>
+  const r = await api.transact(objTrans, { blocksBehind: 3, expireSeconds: 30})<br>
+</code></p>
+</p>
+
+
       </div>
       <div class="dark-box">
       </div>
