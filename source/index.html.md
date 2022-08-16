@@ -1,5 +1,5 @@
 ---
-title: Alcor API Reference
+title: Alcor API Documentation
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
@@ -8,8 +8,11 @@ toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
   - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
 
+<!---
+
 includes:
   - errors
+-->
 
 search: true
 
@@ -356,6 +359,8 @@ So in the market table on dex contract, the <b>base_token</b> is actually <b>quo
 
 
 ## Place order
+TODO
 
 ## Place multiple orders
+
 ## Cancel order
