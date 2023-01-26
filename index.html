@@ -5,7 +5,11 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>API Documentation</title>
+        <meta
+            name="description"
+            content="Alcor Exchange API documentation"
+        >
+    <title>Alcor API Documentation</title>
 
     <style media="screen">
       .highlight table td { padding: 5px; }
@@ -284,11 +288,14 @@
     </style>
     <link href="stylesheets/screen-c9d8fa83.css" rel="stylesheet" media="screen" />
     <link href="stylesheets/print-953e3353.css" rel="stylesheet" media="print" />
-      <script src="javascripts/all_nosearch-18c3ed8e.js"></script>
+      <script src="javascripts/all-b12a2749.js"></script>
 
+    <script>
+      $(function() { setupCodeCopy(); });
+    </script>
   </head>
 
-  <body class="index" data-languages="[]">
+  <body class="index" data-languages="[&quot;shell&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -296,19 +303,37 @@
       </span>
     </a>
     <div class="toc-wrapper">
-      <img src="images/logo-1e815a84.png" class="logo" alt="" />
+      <img src="images/logo-b1b6d564.png" class="logo" alt="" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="shell">shell</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
       <ul id="toc" class="toc-list-h1">
           <li>
             <a href="#introduction" class="toc-h1 toc-link" data-title="Introduction">Introduction</a>
-          </li>
-          <li>
-            <a href="#backend-api" class="toc-h1 toc-link" data-title="Backend API">Backend API</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#get-tickers" class="toc-h2 toc-link" data-title="Get Tickers">Get Tickers</a>
+                    <a href="#alcor-api" class="toc-h2 toc-link" data-title="Alcor API">Alcor API</a>
                   </li>
                   <li>
+                    <a href="#node-api" class="toc-h2 toc-link" data-title="Node API">Node API</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#market-data" class="toc-h1 toc-link" data-title="Market Data">Market Data</a>
+              <ul class="toc-list-h2">
+                  <li>
                     <a href="#get-trading-pairs" class="toc-h2 toc-link" data-title="Get Trading pairs">Get Trading pairs</a>
+                  </li>
+                  <li>
+                    <a href="#get-ticker" class="toc-h2 toc-link" data-title="Get Ticker">Get Ticker</a>
+                  </li>
+                  <li>
+                    <a href="#get-tickers" class="toc-h2 toc-link" data-title="Get Tickers">Get Tickers</a>
                   </li>
                   <li>
                     <a href="#get-orderbook" class="toc-h2 toc-link" data-title="Get Orderbook">Get Orderbook</a>
@@ -331,7 +356,10 @@
               </ul>
           </li>
           <li>
-            <a href="#node-api" class="toc-h1 toc-link" data-title="Node API">Node API</a>
+            <a href="#websocket" class="toc-h1 toc-link" data-title="WebSocket">WebSocket</a>
+          </li>
+          <li>
+            <a href="#trade-api" class="toc-h1 toc-link" data-title="Trade API">Trade API</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#place-order" class="toc-h2 toc-link" data-title="Place order">Place order</a>
@@ -344,7 +372,13 @@
                   </li>
               </ul>
           </li>
+          <li>
+            <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
+          </li>
       </ul>
+        <ul class="toc-footer">
+            <li><a href='https://docs.alcor.exchange'>Documentation & APIv1</a></li>
+        </ul>
     </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>
@@ -352,15 +386,38 @@
         <h1 id='introduction'>Introduction</h1>
 <p>Welcome to the Alcor API here you can find all the necessary information on interacting with Alcor.</p>
 
-<p><b>Interaction with Alcor is divided into 2 types.</b></p>
+<p>Interaction with Alcor is divided into 2 types:</p>
 
 <ul>
-<li>Interaction with the contract. <strong>(Node API)</strong></li>
-<li>Obtaining information about the markets using the Bakend API services. <strong>(Bakend API)</strong></li>
+<li><strong>Interaction with the contract.</strong>
+
+<ul>
+<li>Place/Cancel order.</li>
+<li>Add/Remove LP position.</li>
+</ul></li>
+<li><strong>Obtaining information about the markets using the Alcor API services.</strong>
+
+<ul>
+<li>Market Data</li>
+<li>Liquidity pools Data</li>
+<li>WebSocket Stream</li>
+</ul></li>
 </ul>
-<h1 id='backend-api'>Backend API</h1>
+<h2 id='alcor-api'>Alcor API</h2>
 <p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.</p>
+
+<aside class="notice">
+    Alcor API can be used only for retrieve data. For interacting with blockchain(place/cancel order) use NODE API.
+</aside>
+<h2 id='node-api'>Node API</h2>
+<p>Alcor is DEX, so, intereations with exchange, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>. Some examples can be found in <strong>Trading API</strong> section.</p>
+<h1 id='market-data'>Market Data</h1>
+<p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
+WebSocket allows streaming for orderbook updates, new deals, and account events.</p>
+
+<p>Token symbol repesented as <b>SYMBOL_contract</b>
+following the eosio.token standard. As the one symbol can be deployed by multiple contracts.</p>
 <h4 id='url-structure'>URL Structure</h4>
 <p>HTTP API URL are separated by chains using following structute.
 The UI are following same structute as api, they are splitted by subdomains named by chain.</p>
@@ -373,7 +430,7 @@ The UI are following same structute as api, they are splitted by subdomains name
 </thead><tbody>
 <tr>
 <td>WAX</td>
-<td><b>https://alcor.exchange/api/v2/</b></td>
+<td><b>https://wax.alcor.exchange/api/v2/</b></td>
 </tr>
 <tr>
 <td>EOS</td>
@@ -392,51 +449,27 @@ The UI are following same structute as api, they are splitted by subdomains name
 <aside class="notice">
 All timestamp's are expected to be in milliseconds
 </aside>
-<h2 id='get-tickers'>Get Tickers</h2>
-<p>Endpoint provides pricing and volume information on each market pair available on an exchange.</p>
-
-<p>Ticker ID represented as base token (Symbol-contract) _ quote_token (Symbol-contract)
-example: <b>RDA-deadcitytokn_WAX-eosio.token</b></p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers"</span>
+<h2 id='get-trading-pairs'>Get Trading pairs</h2>
+<p>Provides a list of all trading pairs on the Alcor DEX.</p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/pairs"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
-    </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"last_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.604955</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"ask"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.66299999</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"bid"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.64800031</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.604960</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.604950</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mi">20351</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mi">12312</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"base_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PGL-prospectorsw"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX-eosio.token"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PGL-prospectorsw_WAX-eosio.token"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre></div><h3 id='http-request'>HTTP Request</h3>
-<p><code>GET https://alcor.exchange/api/v2/tickers</code></p>
-
-<p>Without parameters returns all available tickers</p>
-<h3 id='query-parameters'>Query Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Mandatory</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>tickers</td>
-<td>false</td>
-<td>array</td>
-<td>Array of ticker_id&#39;s, for getting only selected tickers</td>
-</tr>
-</tbody></table>
-<h3 id='responce'>Responce</h3>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"base"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"prospectorsw"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"precision"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PGL"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"target"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"precision"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PGL-prospectorsw_WAX-eosio.token"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='responce'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -460,28 +493,64 @@ example: <b>RDA-deadcitytokn_WAX-eosio.token</b></p>
 <td>Symbol code of the target cryptoasset WAX</td>
 </tr>
 </tbody></table>
-<h2 id='get-trading-pairs'>Get Trading pairs</h2>
-<p>Provides a list of all trading pairs on the Alcor DEX.</p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/pairs"</span>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/pairs</code></p>
+<h2 id='get-ticker'>Get Ticker</h2>
+<p>TODO</p>
+<h2 id='get-tickers'>Get Tickers</h2>
+<p>Endpoint provides pricing and volume information on each market pair available on an exchange.</p>
+
+<p>Ticker ID represented as base token (Symbol-contract) _ quote_token (Symbol-contract)
+example: <b>RDA-deadcitytokn_WAX-eosio.token</b></p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ZBW-zombiecointk_WAX-eosio.token"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"base"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ZBW-zombiecointk"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX-eosio.token"</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PIXEL-penguincoins_WAX-eosio.token"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"base"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PIXEL-penguincoins"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX-eosio.token"</span><span class="w">
+        </span><span class="nl">"market_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">656</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WNG-waxpnftgames_WAX-eosio.token"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"base_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WNG-waxpnftgames"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"target_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX-eosio.token"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"last_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0002</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mi">332</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"bid"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0002505</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"ask"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.099</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"high24"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0002</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"low24"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0002</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"change24"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fee"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"frozen"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"min_buy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00000000 WAX"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"min_sell"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.00000001 WNG"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"quote_volume"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"volume24"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"volumeMonth"</span><span class="p">:</span><span class="w"> </span><span class="mf">1600.234234</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"volumeWeek"</span><span class="p">:</span><span class="w"> </span><span class="mf">40.24999686</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
-</span></code></pre></div>
-<p>Token symbol repesented as <b>SYMBOL_contract</b>
-following the eosio.token standard. As the one symbol can be deployed by multiple contracts.</p>
+</span></code></pre></div><h3 id='http-request-2'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/tickers</code></p>
+
+<p>Without parameters returns all available tickers</p>
+<h3 id='query-parameters'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Mandatory</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>tickers</td>
+<td>false</td>
+<td>array</td>
+<td>Array of ticker_id&#39;s, for getting only selected tickers</td>
+</tr>
+</tbody></table>
 <h3 id='responce-2'>Responce</h3>
 <table><thead>
 <tr>
@@ -506,9 +575,7 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <td>Symbol code of the target cryptoasset WAX</td>
 </tr>
 </tbody></table>
-<h3 id='http-request-2'>HTTP Request</h3>
-<p><code>GET https://alcor.exchange/api/v2/pairs</code></p>
-<h2 id='get-orderbook'>Get Orderbook</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://alcor.exchange/api/v2/orderbook/pgl-prospectorsw_wax-eosio.token?depth=10"</span>
+<h2 id='get-orderbook'>Get Orderbook</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/orderbook?depth=3"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -545,9 +612,9 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
-<p>Endpoint using to provide order book information with at least depth = 100 returned for a given ticker. </p>
+<p>Endpoint using to provide order book information with at least depth = 3 returned for a given ticker. </p>
 <h3 id='http-request-3'>HTTP Request</h3>
-<p><code>GET http://alcor.exchange/api/v2/orderbook/:ticker_id</code></p>
+<p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook</code></p>
 <h3 id='query-parameters-2'>Query Parameters</h3>
 <table><thead>
 <tr>
@@ -557,6 +624,12 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <th>Description</th>
 </tr>
 </thead><tbody>
+<tr>
+<td>ticker_id</td>
+<td>true</td>
+<td>string</td>
+<td>ticker id</td>
+</tr>
 <tr>
 <td>depth</td>
 <td>false</td>
@@ -590,31 +663,31 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 </tbody></table>
 <h2 id='get-latest-trades'>Get Latest Trades</h2>
 <p>Retrieve the most recent deals of a ticker, sorted by time from latest to oldest.</p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades"</span>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">48.8126</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.604955</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">29.52941386</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637929769500</span><span class="p">,</span><span class="w">
         </span><span class="nl">"trade_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"61a0fd5b5f0f4674848b26ae"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">48.8126</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">29.52941386</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.604955</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637929769500</span><span class="p">,</span><span class="w">
         </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"buy"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">12.9939</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.60495104</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">7.86070962</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637929668000</span><span class="p">,</span><span class="w">
         </span><span class="nl">"trade_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"61a0fcf65f0f4674848b0cf4"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"base_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">12.9939</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">7.86070962</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.60495104</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637929668000</span><span class="p">,</span><span class="w">
         </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sell"</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div><h3 id='http-request-4'>HTTP Request</h3>
-<p><code>GET http://alcor.exchange/api/v2/orderbook/:ticker_id</code></p>
+<p><code>GET https://alcor.exchange/api/v2/:ticker_id/latest_trades</code></p>
 <h3 id='query-parameters-3'>Query Parameters</h3>
 <table><thead>
 <tr>
@@ -633,7 +706,7 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 </tbody></table>
 <h2 id='get-trade-history'>Get Trade history</h2>
 <p>Retrieve the recent transactions of an instrument, sorted by time from earlyer to latest.</p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://alcor.exchange/api/v2/historical_trades/pgl-prospectorsw_wax-eosio.token?limit=2"</span>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/historical_trades?limit=2"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -659,7 +732,7 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 </span></code></pre></div>
 <p>Endpoint using to return data on historical completed trades for a given ticker.</p>
 <h3 id='http-request-5'>HTTP Request</h3>
-<p><code>GET http://alcor.exchange/api/v2/historical_trades/:ticker_id</code></p>
+<p><code>GET https://alcor.exchange/api/v2/:ticker_id/historical_trades</code></p>
 
 <p>Sorting from lasted to oldest deals</p>
 <h3 id='query-parameters-4'>Query Parameters</h3>
@@ -737,23 +810,49 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 </tbody></table>
 <h2 id='get-klines-candles'>Get Klines (Candles)</h2>
 <p>This endpoint retrieves klines for specific ticker in a specific range.</p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/:ticker_id/charts"</span>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/charts?resolution=60&amp;from=1637856799500&amp;to=1637869859000"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"volume"</span><span class="p">:</span><span class="mf">2170.14554774</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"open"</span><span class="p">:</span><span class="mf">0.06173</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"high"</span><span class="p">:</span><span class="mf">0.062</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"low"</span><span class="p">:</span><span class="mf">0.06125091</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"close"</span><span class="p">:</span><span class="mf">0.06125091</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"time"</span><span class="p">:</span><span class="mi">1659803552500</span><span class="w">
+        </span><span class="nl">"close"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.57009415</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.58999718</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.57009415</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"open"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.58999718</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637856799500</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.34580567</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">Volume</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">TARGET</span><span class="w"> </span><span class="err">currency</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"close"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5889</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5889</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.553</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"open"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.57009415</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637859602500</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">817.85241392</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"close"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5889</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.589</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.553</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"open"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5889</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637863204500</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">32.12719794</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"close"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.59</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.589</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.55999979</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"open"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5889</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1637866965000</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">1759.5935863099999</span><span class="w">
     </span><span class="p">}</span><span class="w">
-
 </span><span class="p">]</span><span class="w">
-</span></code></pre></div><h3 id='query-parameters-5'>Query Parameters</h3>
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div><h3 id='http-request-6'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook</code></p>
+<h3 id='query-parameters-5'>Query Parameters</h3>
 <p>from, to, resolution, limit</p>
 
 <table><thead>
@@ -771,6 +870,12 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <td>Ticker id</td>
 </tr>
 <tr>
+<td>resolution</td>
+<td>true</td>
+<td>string</td>
+<td>Resolution</td>
+</tr>
+<tr>
 <td>from</td>
 <td>false</td>
 <td>timestamp</td>
@@ -782,20 +887,58 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
 <td>timestamp</td>
 <td>End time till which query candles</td>
 </tr>
+</tbody></table>
+
+<p><strong>Resolutions</strong></p>
+
+<table><thead>
 <tr>
-<td>limit</td>
-<td>false</td>
-<td>integer</td>
-<td>Limitation of results</td>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>1 min</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>15</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>30</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>60</td>
+<td>one hour</td>
+</tr>
+<tr>
+<td>240</td>
+<td>4 hours</td>
+</tr>
+<tr>
+<td>1D</td>
+<td>one day</td>
+</tr>
+<tr>
+<td>1W</td>
+<td>one week</td>
+</tr>
+<tr>
+<td>1M</td>
+<td>one month</td>
 </tr>
 </tbody></table>
 <h2 id='get-pools-swap-page'>Get pools (Swap page)</h2>
 <p>TODO</p>
 <h2 id='get-pool-charts'>Get Pool charts</h2>
 <p>TOD</p>
-<h1 id='node-api'>Node API</h1>
-<p>Alcor is DEX, so, intereations with blockchain, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>. Some examples can be found in &quot;Node API&quot; section.</p>
-
+<h1 id='websocket'>WebSocket</h1><h1 id='trade-api'>Trade API</h1>
 <p>Alcor support multiple EOSIO blockchains. Here is contract accounts across supported cahins:</p>
 
 <ul>
@@ -813,9 +956,70 @@ So in the market table on dex contract, the <b>base_token</b> is actually <b>quo
 </aside>
 <h2 id='place-order'>Place order</h2>
 <p>TODO</p>
-<h2 id='place-multiple-orders'>Place multiple orders</h2><h2 id='cancel-order'>Cancel order</h2>
+<h2 id='place-multiple-orders'>Place multiple orders</h2><h2 id='cancel-order'>Cancel order</h2><h1 id='errors'>Errors</h1>
+<aside class="notice">
+This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
+</aside>
+
+<p>The Kittn API uses the following error codes:</p>
+
+<table><thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td>Bad Request -- Your request is invalid.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized -- Your API key is wrong.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden -- The kitten requested is hidden for administrators only.</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found -- The specified kitten could not be found.</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Method Not Allowed -- You tried to access a kitten with an invalid method.</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable -- You requested a format that isn&#39;t json.</td>
+</tr>
+<tr>
+<td>410</td>
+<td>Gone -- The kitten requested has been removed from our servers.</td>
+</tr>
+<tr>
+<td>418</td>
+<td>I&#39;m a teapot.</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests -- You&#39;re requesting too many kittens! Slow down!</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
+</tr>
+</tbody></table>
+
       </div>
       <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="shell">shell</a>
+          </div>
       </div>
     </div>
   </body>
