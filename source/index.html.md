@@ -5,14 +5,10 @@ language_tabs: # must be one of https://git.io/vQNgJ
   - shell
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
-
-<!---
+  - <a href='https://docs.alcor.exchange'>Documentation & APIv1</a>
 
 includes:
   - errors
--->
 
 search: true
 
@@ -26,22 +22,42 @@ meta:
 # Introduction
 Welcome to the Alcor API here you can find all the necessary information on interacting with Alcor.
 
-<b>Interaction with Alcor is divided into 2 types.</b>
+Interaction with Alcor is divided into 2 types:
 
-- Interaction with the contract. **(Node API)**
-- Obtaining information about the markets using the Bakend API services. **(Bakend API)**
+* **Interaction with the contract.**
+    * Place/Cancel order.
+    * Add/Remove LP position.
+* **Obtaining information about the markets using the Alcor API services.**
+    * Market Data
+    * Liquidity pools Data
+    * WebSocket Stream
 
-# Backend API
+## Alcor API
 Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.
+
+<aside class="notice">
+    Alcor API can be used only for retrieve data. For interacting with blockchain(place/cancel order) use NODE API.
+</aside>
+
+## Node API
+Alcor is DEX, so, intereations with exchange, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>. Some examples can be found in **Trading API** section.
+
+
+# Market Data
+Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
+WebSocket allows streaming for orderbook updates, new deals, and account events.
+
+Token symbol repesented as <b>SYMBOL_contract</b>
+following the eosio.token standard. As the one symbol can be deployed by multiple contracts.
 
 #### URL Structure
 HTTP API URL are separated by chains using following structute.
 The UI are following same structute as api, they are splitted by subdomains named by chain.
 
 Chain | URL
----------- | -------
-WAX | <b>https://alcor.exchange/api/v2/</b>
+---------- | ---------
+WAX | <b>https://wax.alcor.exchange/api/v2/</b>
 EOS | <b>https://eos.alcor.exchange/api/v2/</b>
 Proton | <b>https://proton.alcor.exchange/api/v2/</b>
 Telos | <b>https://telos.alcor.exchange/api/v2/</b>
@@ -50,6 +66,45 @@ Telos | <b>https://telos.alcor.exchange/api/v2/</b>
 <aside class="notice">
 All timestamp's are expected to be in milliseconds
 </aside>
+
+## Get Trading pairs
+Provides a list of all trading pairs on the Alcor DEX.
+
+```shell
+curl "https://alcor.exchange/api/v2/pairs"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "base": {
+        "contract": "prospectorsw",
+        "precision": 4,
+        "symbol": "PGL"
+    },
+    "target": {
+        "contract": "eosio.token",
+        "precision": 8,
+        "symbol": "WAX"
+    },
+    "ticker_id": "PGL-prospectorsw_WAX-eosio.token"
+}
+```
+
+### Responce
+Name | Type | Description
+---------- | --------------------------- | ----------- | -----------
+ticker_id | string | Identifier of a ticker with delimiter to separate base/target
+base | string | Symbol code of a the base cryptoasset PIXEL
+target | string | Symbol code of the target cryptoasset WAX
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/pairs`
+
+## Get Ticker
+TODO
 
 ## Get Tickers
 Endpoint provides pricing and volume information on each market pair available on an exchange.
@@ -65,16 +120,26 @@ curl "https://alcor.exchange/api/v2/tickers"
 ```json
 [
     {
-        "last_price": 0.604955,
-        "ask": 0.66299999,
-        "bid": 0.64800031,
-        "high": 0.604960,
-        "low": 0.604950,
-        "base_volume": 20351,
-        "target_volume": 12312,
-        "base_currency": "PGL-prospectorsw",
+        "market_id": 656,
+        "ticker_id": "WNG-waxpnftgames_WAX-eosio.token",
+        "base_currency": "WNG-waxpnftgames",
         "target_currency": "WAX-eosio.token",
-        "ticker_id": "PGL-prospectorsw_WAX-eosio.token"
+        "last_price": 0.0002,
+        "base_volume": 332,
+        "target_volume": 12,
+        "bid": 0.0002505,
+        "ask": 0.099,
+        "high24": 0.0002,
+        "low24": 0.0002,
+        "change24": 0,
+        "fee": 0,
+        "frozen": false,
+        "min_buy": "1.00000000 WAX",
+        "min_sell": "0.00000001 WNG",
+        "quote_volume": 0,
+        "volume24": 0,
+        "volumeMonth": 1600.234234,
+        "volumeWeek": 40.24999686
     }
 ]
 ```
@@ -100,47 +165,9 @@ base | string | Symbol code of a the base cryptoasset PIXEL
 target | string | Symbol code of the target cryptoasset WAX
 
 
-## Get Trading pairs
-Provides a list of all trading pairs on the Alcor DEX.
-
-```shell
-curl "https://alcor.exchange/api/v2/pairs"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-    {
-        "ticker_id": "ZBW-zombiecointk_WAX-eosio.token",
-        "base": "ZBW-zombiecointk",
-        "target": "WAX-eosio.token"
-    },
-    {
-        "ticker_id": "PIXEL-penguincoins_WAX-eosio.token",
-        "base": "PIXEL-penguincoins",
-        "target": "WAX-eosio.token"
-    }
-]
-```
-
-Token symbol repesented as <b>SYMBOL_contract</b>
-following the eosio.token standard. As the one symbol can be deployed by multiple contracts.
-
-### Responce
-Name | Type | Description
----------- | --------------------------- | ----------- | -----------
-ticker_id | string | Identifier of a ticker with delimiter to separate base/target
-base | string | Symbol code of a the base cryptoasset PIXEL
-target | string | Symbol code of the target cryptoasset WAX
-
-### HTTP Request
-
-`GET https://alcor.exchange/api/v2/pairs`
-
 ## Get Orderbook
 ```shell
-curl "http://alcor.exchange/api/v2/orderbook/pgl-prospectorsw_wax-eosio.token?depth=10"
+curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/orderbook?depth=3"
 ```
 > The above command returns JSON structured like this:
 
@@ -178,16 +205,17 @@ curl "http://alcor.exchange/api/v2/orderbook/pgl-prospectorsw_wax-eosio.token?de
 }
 ```
 
-Endpoint using to provide order book information with at least depth = 100 returned for a given ticker. 
+Endpoint using to provide order book information with at least depth = 3 returned for a given ticker. 
 
 ### HTTP Request
 
-`GET http://alcor.exchange/api/v2/orderbook/:ticker_id`
+`GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook`
 
 ### Query Parameters
 
 Parameter | Mandatory | Default | Description
 --------- | ------- | ----------- | --
+ticker_id | true | string | ticker id
 depth | false | 300 | The number of market depth to return on each side
 
 ### Responce
@@ -201,30 +229,32 @@ asks | array | Array of asks. ask structure: [price, quantity]
 
 
 
+
+
 ## Get Latest Trades
 Retrieve the most recent deals of a ticker, sorted by time from latest to oldest.
 
 ```shell
-curl "http://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades"
+curl "https://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades"
 ```
 > The above command returns JSON structured like this:
 
 ```json
 [
     {
-        "base_volume": 48.8126,
-        "price": 0.604955,
-        "target_volume": 29.52941386,
-        "time": 1637929769500,
         "trade_id": "61a0fd5b5f0f4674848b26ae",
+        "base_volume": 48.8126,
+        "target_volume": 29.52941386,
+        "price": 0.604955,
+        "time": 1637929769500,
         "type": "buy"
     },
     {
-        "base_volume": 12.9939,
-        "price": 0.60495104,
-        "target_volume": 7.86070962,
-        "time": 1637929668000,
         "trade_id": "61a0fcf65f0f4674848b0cf4",
+        "base_volume": 12.9939,
+        "target_volume": 7.86070962,
+        "price": 0.60495104,
+        "time": 1637929668000,
         "type": "sell"
     }
 ]
@@ -232,7 +262,7 @@ curl "http://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades"
 
 ### HTTP Request
 
-`GET http://alcor.exchange/api/v2/orderbook/:ticker_id`
+`GET https://alcor.exchange/api/v2/:ticker_id/latest_trades`
 
 ### Query Parameters
 
@@ -245,7 +275,7 @@ limit | false | 300 | The number of latest trades to return
 Retrieve the recent transactions of an instrument, sorted by time from earlyer to latest.
 
 ```shell
-curl "http://alcor.exchange/api/v2/historical_trades/pgl-prospectorsw_wax-eosio.token?limit=2"
+curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/historical_trades?limit=2"
 ```
 > The above command returns JSON structured like this:
 
@@ -274,7 +304,7 @@ Endpoint using to return data on historical completed trades for a given ticker.
 
 ### HTTP Request
 
-`GET http://alcor.exchange/api/v2/historical_trades/:ticker_id`
+`GET https://alcor.exchange/api/v2/:ticker_id/historical_trades`
 
 Sorting from lasted to oldest deals
 
@@ -302,7 +332,7 @@ type | string |  Used to determine the type of the transaction that was complete
 This endpoint retrieves klines for specific ticker in a specific range.
 
 ```shell
-curl "https://alcor.exchange/api/v2/:ticker_id/charts"
+curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/charts?resolution=60&from=1637856799500&to=1637869859000"
 ```
 
 > The above command returns JSON structured like this:
@@ -310,16 +340,45 @@ curl "https://alcor.exchange/api/v2/:ticker_id/charts"
 ```json
 [
     {
-        "volume":2170.14554774,
-        "open":0.06173,
-        "high":0.062,
-        "low":0.06125091,
-        "close":0.06125091,
-        "time":1659803552500
+        "close": 0.57009415,
+        "high": 0.58999718,
+        "low": 0.57009415,
+        "open": 0.58999718,
+        "time": 1637856799500,
+        "volume": 1.34580567 // Volume in TARGET currency
+    },
+    {
+        "close": 0.5889,
+        "high": 0.5889,
+        "low": 0.553,
+        "open": 0.57009415,
+        "time": 1637859602500,
+        "volume": 817.85241392
+    },
+    {
+        "close": 0.5889,
+        "high": 0.589,
+        "low": 0.553,
+        "open": 0.5889,
+        "time": 1637863204500,
+        "volume": 32.12719794
+    },
+    {
+        "close": 0.59,
+        "high": 0.589,
+        "low": 0.55999979,
+        "open": 0.5889,
+        "time": 1637866965000,
+        "volume": 1759.5935863099999
     }
-
+]
 ]
 ```
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook`
+
 
 ### Query Parameters
 
@@ -328,9 +387,23 @@ from, to, resolution, limit
 Parameter | Mandatory | Type | Description
 --------- | ------- | ----------- | ---------
 ticker_id | true | string | Ticker id
+resolution | true | string | Resolution
 from | false | timestamp | Start time for getting historical candles
 to | false | timestamp | End time till which query candles
-limit | false | integer | Limitation of results
+
+**Resolutions**
+
+Value | Description
+----- | ----------
+1 | 1 min
+5 | 5 min
+15 | 15 min
+30 | 30 min
+60 | one hour
+240 | 4 hours
+1D | one day
+1W | one week
+1M | one month
 
 ## Get pools (Swap page)
 TODO
@@ -339,10 +412,9 @@ TODO
 ## Get Pool charts
 TOD
 
+# WebSocket
 
-# Node API
-Alcor is DEX, so, intereations with blockchain, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>. Some examples can be found in "Node API" section.
-
+# Trade API
 Alcor support multiple EOSIO blockchains. Here is contract accounts across supported cahins:
 
 - WAX - alcordexmain
