@@ -295,7 +295,7 @@
     </script>
   </head>
 
-  <body class="index" data-languages="[&quot;shell&quot;]">
+  <body class="index" data-languages="[&quot;shell&quot;,&quot;javascript&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -306,6 +306,7 @@
       <img src="images/logo-b1b6d564.png" class="logo" alt="" />
         <div class="lang-selector">
               <a href="#" data-language-name="shell">shell</a>
+              <a href="#" data-language-name="javascript">javascript</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -347,25 +348,41 @@
                   <li>
                     <a href="#get-klines-candles" class="toc-h2 toc-link" data-title="Get Klines (Candles)">Get Klines (Candles)</a>
                   </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#onchain-data" class="toc-h1 toc-link" data-title="OnChain Data">OnChain Data</a>
+              <ul class="toc-list-h2">
                   <li>
-                    <a href="#get-pools-swap-page" class="toc-h2 toc-link" data-title="Get pools (Swap page)">Get pools (Swap page)</a>
+                    <a href="#markets" class="toc-h2 toc-link" data-title="Markets">Markets</a>
                   </li>
                   <li>
-                    <a href="#get-pool-charts" class="toc-h2 toc-link" data-title="Get Pool charts">Get Pool charts</a>
+                    <a href="#orders" class="toc-h2 toc-link" data-title="Orders">Orders</a>
                   </li>
               </ul>
           </li>
           <li>
             <a href="#websocket" class="toc-h1 toc-link" data-title="WebSocket">WebSocket</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#deals" class="toc-h2 toc-link" data-title="Deals">Deals</a>
+                  </li>
+                  <li>
+                    <a href="#orderbook" class="toc-h2 toc-link" data-title="Orderbook">Orderbook</a>
+                  </li>
+                  <li>
+                    <a href="#ticker" class="toc-h2 toc-link" data-title="Ticker">Ticker</a>
+                  </li>
+                  <li>
+                    <a href="#account" class="toc-h2 toc-link" data-title="Account">Account</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#trade-api" class="toc-h1 toc-link" data-title="Trade API">Trade API</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#place-order" class="toc-h2 toc-link" data-title="Place order">Place order</a>
-                  </li>
-                  <li>
-                    <a href="#place-multiple-orders" class="toc-h2 toc-link" data-title="Place multiple orders">Place multiple orders</a>
                   </li>
                   <li>
                     <a href="#cancel-order" class="toc-h2 toc-link" data-title="Cancel order">Cancel order</a>
@@ -403,6 +420,8 @@
 <li>WebSocket Stream</li>
 </ul></li>
 </ul>
+
+<p>Basic documentation can be found here: <a href="https://docs.alcor.exchange/">docs.alcor.exchange</a></p>
 <h2 id='alcor-api'>Alcor API</h2>
 <p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.</p>
@@ -410,8 +429,33 @@ WebSocket allows streaming for orderbook updates, new deals, and account events.
 <aside class="notice">
     Alcor API can be used only for retrieve data. For interacting with blockchain(place/cancel order) use NODE API.
 </aside>
-<h2 id='node-api'>Node API</h2>
-<p>Alcor is DEX, so, intereations with exchange, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>. Some examples can be found in <strong>Trading API</strong> section.</p>
+<h2 id='node-api'>Node API</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="k">import</span> <span class="nx">fetch</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">node-fetch</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Api</span><span class="p">,</span> <span class="nx">JsonRpc</span><span class="p">,</span> <span class="nx">RpcError</span><span class="p">,</span> <span class="nx">JsSignatureProvider</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">eosjs</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">rpc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JsonRpc</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://eos.greymass.com</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">fetch</span> <span class="p">})</span>
+<span class="kd">const</span> <span class="nx">signatureProvider</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JsSignatureProvider</span><span class="p">([</span><span class="dl">'</span><span class="s1">private key of order owner</span><span class="dl">'</span><span class="p">])</span>
+<span class="kd">const</span> <span class="nx">api</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Api</span><span class="p">({</span> <span class="nx">rpc</span><span class="p">,</span> <span class="nx">signatureProvider</span><span class="p">,</span> <span class="na">textDecoder</span><span class="p">:</span> <span class="k">new</span> <span class="nx">TextDecoder</span><span class="p">(),</span> <span class="na">textEncoder</span><span class="p">:</span> <span class="k">new</span> <span class="nx">TextEncoder</span><span class="p">()</span> <span class="p">});</span>
+</code></pre></div>
+<p>Alcor is DEX, so, intereations with exchange, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>.
+Examples can be found in <strong>Trading API</strong> section.</p>
+
+<p>Alcor support multiple EOSIO blockchains. Here is dex contract accounts across supported cahins:</p>
+
+<ul>
+<li>WAX - alcordexmain</li>
+<li>EOS - eostokensdex</li>
+<li>TELOS - eostokensdex</li>
+<li>Proton - alcor</li>
+</ul>
+
+<p>You can easly interacting with alcor contracts using <strong><a href="https://github.com/EOSIO/eosjs">EOSJS library</a></strong>. </p>
+
+<p>Alternatives:</p>
+
+<ul>
+<li><a href="https://github.com/greymass/eosio-core">greymass/eosio-core</a></li>
+<li><a href="https://github.com/eosnetworkfoundation/mandel-eosjs">eosnetworkfoundation/mandel-eosjs</a></li>
+</ul>
 <h1 id='market-data'>Market Data</h1>
 <p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.</p>
@@ -849,9 +893,8 @@ example: <b>RDA-deadcitytokn_WAX-eosio.token</b></p>
         </span><span class="nl">"volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">1759.5935863099999</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
-</span><span class="p">]</span><span class="w">
 </span></code></pre></div><h3 id='http-request-6'>HTTP Request</h3>
-<p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook</code></p>
+<p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/charts</code></p>
 <h3 id='query-parameters-5'>Query Parameters</h3>
 <p>from, to, resolution, limit</p>
 
@@ -889,74 +932,457 @@ example: <b>RDA-deadcitytokn_WAX-eosio.token</b></p>
 </tr>
 </tbody></table>
 
-<p><strong>Resolutions</strong></p>
+<p><strong>Supported resolutions:</strong></p>
 
+<p><code>1, 5, 15, 30, 60, 240, 1D, 1W, 1M</code></p>
+<h1 id='onchain-data'>OnChain Data</h1>
+<p>To fetch data (orders/markets) directly from blockchain you have to use NodeAPI</p>
+
+<p>Contract tables structute can be found here <a href="https://docs.alcor.exchange/developers-api/contract-tables">https://docs.alcor.exchange</a></p>
+<h2 id='markets'>Markets</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>cleos <span class="nt">-u</span> https://wax.greymass.com get table alcordexmain alcordexmain markets
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="k">import</span> <span class="nx">fetch</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">node-fetch</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Api</span><span class="p">,</span> <span class="nx">JsonRpc</span><span class="p">,</span> <span class="nx">RpcError</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">eosjs</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">rpc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JsonRpc</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://wax.greymass.com</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">fetch</span> <span class="p">})</span>
+
+<span class="c1">// Get markets</span>
+<span class="kd">const</span> <span class="p">{</span> <span class="nx">rows</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">rpc</span><span class="p">.</span><span class="nx">get_table_rows</span><span class="p">({</span>
+  <span class="na">code</span><span class="p">:</span> <span class="dl">'</span><span class="s1">alcordexmain</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// dex account</span>
+  <span class="na">table</span><span class="p">:</span> <span class="dl">'</span><span class="s1">buyorder</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// side</span>
+  <span class="na">limit</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+  <span class="na">scope</span><span class="p">:</span> <span class="dl">'</span><span class="s1">alcordexmain</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// scope same as contract name</span>
+<span class="p">})</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"rows"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"base_token"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"sym"</span><span class="p">:</span><span class="w"> </span><span class="s2">"8,WAX"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"quote_token"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"sym"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4,PGL"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"prospectorsw"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"min_buy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.00000100 WAX"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"min_sell"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0001 PGL"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"frozen"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"fee"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+    </span><span class="p">},</span><span class="w"> </span><span class="err">...</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Markets are stored in <strong>markets</strong> table, scoped by contract name.</p>
+
+<aside class="notice">
+<b>ATTENTION!</b> <br> Due the legacy codebase of dex smart contract, the naming of <b>base</b> and <b>quote</b> are mixed up in places.
+So in the market table on dex contract, the <b>base_token</b> is actually <b>quote_token</b> and vice versa.
+</aside>
+
+<p><strong>market_id</strong> are used as scope for orders table and should be provided as parameter for canceling order.</p>
+<h3 id='table-structute'>Table structute</h3>
 <table><thead>
 <tr>
-<th>Value</th>
-<th>Description</th>
+<th>key</th>
+<th>description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>1</td>
-<td>1 min</td>
+<td>id</td>
+<td>market_id</td>
 </tr>
 <tr>
-<td>5</td>
-<td>5 min</td>
+<td>base_token</td>
+<td>target currency</td>
 </tr>
 <tr>
-<td>15</td>
-<td>15 min</td>
+<td>quote_token</td>
+<td>base_token currency</td>
 </tr>
 <tr>
-<td>30</td>
-<td>30 min</td>
+<td>min_buy</td>
+<td>Min buy amount</td>
 </tr>
 <tr>
-<td>60</td>
-<td>one hour</td>
+<td>min_sell</td>
+<td>Min sell amount</td>
 </tr>
 <tr>
-<td>240</td>
-<td>4 hours</td>
+<td>frozen</td>
+<td>Market are frozen if 1</td>
 </tr>
 <tr>
-<td>1D</td>
-<td>one day</td>
-</tr>
-<tr>
-<td>1W</td>
-<td>one week</td>
-</tr>
-<tr>
-<td>1M</td>
-<td>one month</td>
+<td>fee</td>
+<td>Market fee</td>
 </tr>
 </tbody></table>
-<h2 id='get-pools-swap-page'>Get pools (Swap page)</h2>
-<p>TODO</p>
-<h2 id='get-pool-charts'>Get Pool charts</h2>
-<p>TOD</p>
-<h1 id='websocket'>WebSocket</h1><h1 id='trade-api'>Trade API</h1>
-<p>Alcor support multiple EOSIO blockchains. Here is contract accounts across supported cahins:</p>
+<h2 id='orders'>Orders</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>cleos <span class="nt">-u</span> https://wax.greymass.com get table alcordexmain 26 buyorder <span class="nt">-l</span> 2
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="k">import</span> <span class="nx">fetch</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">node-fetch</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Api</span><span class="p">,</span> <span class="nx">JsonRpc</span><span class="p">,</span> <span class="nx">RpcError</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">eosjs</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">rpc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JsonRpc</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://wax.greymass.com</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">fetch</span> <span class="p">})</span>
+
+<span class="c1">// Get buy orderbook from conract table</span>
+
+<span class="kd">const</span> <span class="p">{</span> <span class="nx">rows</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">rpc</span><span class="p">.</span><span class="nx">get_table_rows</span><span class="p">({</span>
+  <span class="na">code</span><span class="p">:</span> <span class="dl">'</span><span class="s1">alcordexmain</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">table</span><span class="p">:</span> <span class="dl">'</span><span class="s1">buyorder</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">limit</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="c1">// limit up to 1000</span>
+  <span class="na">scope</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span> <span class="c1">// Market id from /api/markets or markets table</span>
+  <span class="na">key_type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">i128</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// we are using it for getting order sorted by price.</span>
+  <span class="na">index_position</span><span class="p">:</span> <span class="mi">2</span>
+<span class="p">})</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"rows"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">28</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"account"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pxawpxawpxaw"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"bid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.00000000 WAX"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"ask"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1999.9560 TLM"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"unit_price"</span><span class="p">:</span><span class="w"> </span><span class="s2">"500012"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1603653505</span><span class="w">
+    </span><span class="p">},{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">276</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"account"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e43am.waa"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"bid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"35.00000000 WAX"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"ask"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5000.0000 TLM"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"unit_price"</span><span class="p">:</span><span class="w"> </span><span class="s2">"700000"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1609173873</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"more"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"next_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"558"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Orders are stored in <strong>buyorder</strong> and <strong>sellorder</strong> tables.
+Scoped by market_id(you can find one in <strong>markets</strong> table)</p>
+<h3 id='table-structute-2'>Table structute</h3>
+<table><thead>
+<tr>
+<th>key</th>
+<th>description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>order id</td>
+</tr>
+<tr>
+<td>account</td>
+<td>order owner account</td>
+</tr>
+<tr>
+<td>unit_price</td>
+<td>Price in integer</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>Order time creation</td>
+</tr>
+</tbody></table>
+<h1 id='websocket'>WebSocket</h1><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">io</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">socket.io-client</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://alcor.exchange</span><span class="dl">'</span><span class="p">)</span>
+</code></pre></div>
+<p>Alcor using <a href="https://socket.io/">Socket.IO</a> for interact via WebSocket technology.</p>
+
+<p><strong>There are two commands for subscribing to and channel with specific information.</strong></p>
 
 <ul>
-<li>WAX - alcordexmain</li>
-<li>EOS - eostokensdex</li>
-<li>TELOS - eostokensdex</li>
-<li>Proton - alcor</li>
+<li><strong>subscribe</strong>: Subscribing for an specific room.</li>
+<li><strong>unsubscribe</strong>: Unsubscribe from sprcific room.</li>
 </ul>
 
-<p>You can easly interacting with alcor contracts using <strong><a href="https://github.com/EOSIO/eosjs">EOSJS library</a></strong>. </p>
+<p><strong>You can subscribe to rooms to receive specific event information.</strong></p>
+
+<ul>
+<li>deals</li>
+<li>ticker</li>
+<li>account</li>
+<li>orderbook</li>
+</ul>
+<h2 id='deals'>Deals</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// Subscribe to deals</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">subscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">deals</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// Chain</span>
+        <span class="na">market</span><span class="p">:</span> <span class="mi">26</span> <span class="c1">// Market id</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1">// Handle new deals</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">new_deals</span><span class="dl">'</span><span class="p">,</span> <span class="nx">deals</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+
+<span class="c1">// Unsubscribe from deals (will unsubscribe from all markets)</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">unsubscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">deals</span><span class="dl">'</span><span class="p">,</span> <span class="na">params</span><span class="p">:</span> <span class="p">{</span> <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span> <span class="p">}</span> <span class="p">})</span>
+</code></pre></div>
+<blockquote>
+<p>Responce:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1674820074000</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"ask"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.5771</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"bid"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.99799129</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"buymatch"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"unit_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.27899985</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"trx_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"d4acaa5ae75bccad12ca82dd2d1d3fa5822cece1307ced10ee0daefaeb6d5009"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>Subscribing to new deals for specific market.</p>
+
+<p><strong>Room name</strong>: deals</p>
+
+<p><strong>Params</strong>:</p>
+
+<table><thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>chain</td>
+<td>chain id</td>
+</tr>
+<tr>
+<td>market</td>
+<td>market id</td>
+</tr>
+</tbody></table>
+<h2 id='orderbook'>Orderbook</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// Subscribe to buy orderbook of 26 (TLM on wax) market.</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">subscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">deals</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">orderbook</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// Chain</span>
+        <span class="na">market</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span> <span class="c1">// Market id,</span>
+        <span class="na">side</span><span class="p">:</span> <span class="dl">'</span><span class="s1">buy</span><span class="dl">'</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1">// On orderbook bid side update</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">orderbook_buy</span><span class="dl">'</span><span class="p">,</span> <span class="nx">bids</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+
+<span class="c1">// On orderbook ask side update</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">orderbook_sell</span><span class="dl">'</span><span class="p">,</span> <span class="nx">asks</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="p">})</span>
+
+<span class="c1">// Unsubscribe from orderbook (all, buy and sell)</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">unsubscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">orderbook</span><span class="dl">'</span><span class="p">,</span> <span class="na">params</span><span class="p">:</span> <span class="p">{</span> <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span><span class="p">,</span> <span class="na">market</span><span class="p">:</span> <span class="mi">26</span> <span class="p">}</span> <span class="p">})</span>
+</code></pre></div>
+<blockquote>
+<p>Responce:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">[</span><span class="w">
+      </span><span class="mi">27899985</span><span class="p">,</span><span class="w">
+      </span><span class="mi">3044158</span><span class="p">,</span><span class="w">
+      </span><span class="mi">8493196253</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>Subscribe to orderbook updates. First update is full order book state.</p>
+
+<p><strong>Room name</strong>: orderbook</p>
+
+<p><strong>Params</strong>:</p>
+
+<table><thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>chain</td>
+<td>chain id</td>
+</tr>
+<tr>
+<td>market</td>
+<td>market id</td>
+</tr>
+<tr>
+<td>side</td>
+<td><strong>sell</strong> or <strong>buy</strong></td>
+</tr>
+</tbody></table>
+<h2 id='ticker'>Ticker</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// Subscribe</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">subscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ticker</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">market</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+    <span class="na">resolution</span><span class="p">:</span> <span class="dl">'</span><span class="s1">30</span><span class="dl">'</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1">// Unsubscribe</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">unsubscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ticker</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">market</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+    <span class="na">resolution</span><span class="p">:</span> <span class="dl">'</span><span class="s1">30</span><span class="dl">'</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+
+</code></pre></div>
+<blockquote>
+<p>Responce:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="s2">"tick"</span><span class="p">,</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"close"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01175084</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"open"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01175084</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"high"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01175084</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"low"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01175084</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.11727339</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1674821301500</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>Subscribe for chart updates.</p>
+
+<p><strong>Room name</strong>: ticker</p>
+
+<p><strong>Params</strong>:</p>
+
+<table><thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>chain</td>
+<td>chain id</td>
+</tr>
+<tr>
+<td>market</td>
+<td>market id</td>
+</tr>
+<tr>
+<td>resolution</td>
+<td>Resolution (see list below)</td>
+</tr>
+</tbody></table>
+
+<p>Supported resolutions:</p>
+
+<p><code>1, 5, 15, 30, 60, 240, 1D, 1W, 1M</code></p>
+<h2 id='account'>Account</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">subscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">account</span><span class="dl">'</span><span class="p">,</span> <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span><span class="p">,</span>
+        <span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">randomuser</span><span class="dl">'</span> <span class="c1">// Account for listen events</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div>
+<blockquote>
+<p>Responce</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="s2">"match"</span><span class="p">,</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"ask"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.11727339</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"market_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">156</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01175084</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>Subscribe to account events/notifications. Only order matches for now.</p>
+
+<p><strong>Room name</strong>: account</p>
+
+<p><strong>Params</strong>:</p>
+
+<table><thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>chain</td>
+<td>chain id</td>
+</tr>
+<tr>
+<td>name</td>
+<td>Account</td>
+</tr>
+</tbody></table>
+<h1 id='trade-api'>Trade API</h1>
+<p>To trade assets you sould use Blockchain API directly. More information on Interaction/NodeAPI.</p>
+<h2 id='place-order'>Place order</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>cleos push action tktoken transfer <span class="se">\</span>
+    <span class="s1">'[bob, alcordexmain, "0.5000 TKT", "0.0010 EOS@eosio.token"]'</span> <span class="nt">-p</span> bob
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">actions</span> <span class="o">=</span> <span class="p">[{</span>
+  <span class="na">account</span><span class="p">:</span> <span class="dl">'</span><span class="s1">tktoken</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// token contract</span>
+  <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">transfer</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">authorization</span><span class="p">:</span> <span class="p">[{</span>
+    <span class="na">actor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">useraaaaaaaa</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// account placing order (owner)</span>
+    <span class="na">permission</span><span class="p">:</span> <span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">,</span>
+  <span class="p">}],</span>
+  <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">from</span><span class="p">:</span> <span class="dl">'</span><span class="s1">useraaaaaaaa</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">to</span><span class="p">:</span> <span class="dl">'</span><span class="s1">alcordexmain</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">quantity</span><span class="p">:</span> <span class="dl">'</span><span class="s1">0.5000 TKT</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// Bid</span>
+    <span class="na">memo</span><span class="p">:</span> <span class="dl">'</span><span class="s1">0.0001 EOS@eosio.token</span><span class="dl">'</span> <span class="c1">// Ask</span>
+  <span class="p">}</span>
+<span class="p">}]</span>
+
+<span class="c1">// Result of transaction</span>
+<span class="kd">const</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">api</span><span class="p">.</span><span class="nx">transact</span><span class="p">(</span><span class="nx">actions</span><span class="p">)</span>
+</code></pre></div>
+<blockquote>
+<p>Bob are selling 0.5 TKT and buying 0.001 EOS.</p>
+</blockquote>
+
+<p>Send the amount(bid) you want to sell to dex contract account, and specify the amount you ask in the memo, the price and market will be automatically determined in the contract.</p>
+
+<p>Memo format(ask token):
+<code>&lt;token_amount&gt; &lt;token_symbol&gt;@&lt;token_contract&gt;</code></p>
 
 <aside class="notice">
-<b>ATTENTION!</b> Due the legacy codebase of dex smart contract, the <b>base</b> and <b>quote</b> are mixed up in places.
-So in the market table on dex contract, the <b>base_token</b> is actually <b>quote_token</b> and vice versa.
+    Orders can not be updated. To update order simply cancel current and place new one.
 </aside>
-<h2 id='place-order'>Place order</h2>
-<p>TODO</p>
-<h2 id='place-multiple-orders'>Place multiple orders</h2><h2 id='cancel-order'>Cancel order</h2><h1 id='errors'>Errors</h1>
+<h3 id='place-multiple-orders'>Place multiple orders</h3>
+<p>Same way as described but transaction may contain multiple actions(array).</p>
+<h2 id='cancel-order'>Cancel order</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>cleos push action alcordexmain cancelsell <span class="se">\</span>
+    <span class="s1">'[bob, 262, 1284277]'</span> <span class="nt">-p</span> bob
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">api</span><span class="p">.</span><span class="nx">transact</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="na">account</span><span class="p">:</span> <span class="dl">'</span><span class="s1">tktoken</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">transfer</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">authorization</span><span class="p">:</span> <span class="p">[{</span>
+          <span class="na">actor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">useraccountname</span><span class="dl">'</span><span class="p">,</span>
+          <span class="na">permission</span><span class="p">:</span> <span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">,</span>
+        <span class="p">}],</span>
+        <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">from</span><span class="p">:</span> <span class="dl">'</span><span class="s1">useraccountname</span><span class="dl">'</span><span class="p">,</span>
+          <span class="na">to</span><span class="p">:</span> <span class="dl">'</span><span class="s1">alcordexmain</span><span class="dl">'</span><span class="p">,</span>
+          <span class="na">quantity</span><span class="p">:</span> <span class="dl">'</span><span class="s1">0.5000 TKT</span><span class="dl">'</span><span class="p">,</span>
+          <span class="na">memo</span><span class="p">:</span> <span class="dl">'</span><span class="s1">0.0010 EOS@eosio.token</span><span class="dl">'</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]);</span>
+</code></pre></div>
+<blockquote>
+<p>Bob are canceling sell order on 262 market.</p>
+</blockquote>
+
+<p>Call action <strong>cancelsell</strong> or <strong>cancelbuy</strong> with parameters:</p>
+
+<ul>
+<li><strong>executor</strong> - order owner account name</li>
+<li><strong>market_id</strong> - id of the order related market</li>
+<li><strong>order_id</strong> - order id.</li>
+</ul>
+<h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
 </aside>
@@ -1019,6 +1445,7 @@ This error section is stored in a separate file in <code>includes/_errors.md</co
       <div class="dark-box">
           <div class="lang-selector">
                 <a href="#" data-language-name="shell">shell</a>
+                <a href="#" data-language-name="javascript">javascript</a>
           </div>
       </div>
     </div>
