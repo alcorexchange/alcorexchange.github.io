@@ -3,6 +3,7 @@ title: Alcor API Documentation
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
+  - javascript
 
 toc_footers:
   - <a href='https://docs.alcor.exchange'>Documentation & APIv1</a>
@@ -32,6 +33,9 @@ Interaction with Alcor is divided into 2 types:
     * Liquidity pools Data
     * WebSocket Stream
 
+Basic documentation can be found here: [docs.alcor.exchange](https://docs.alcor.exchange/)
+
+
 ## Alcor API
 Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.
@@ -41,7 +45,32 @@ WebSocket allows streaming for orderbook updates, new deals, and account events.
 </aside>
 
 ## Node API
-Alcor is DEX, so, intereations with exchange, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>. Some examples can be found in **Trading API** section.
+```javascript
+import fetch from 'node-fetch'
+import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs'
+
+const rpc = new JsonRpc('https://eos.greymass.com', { fetch })
+const signatureProvider = new JsSignatureProvider(['private key of order owner'])
+const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
+```
+Alcor is DEX, so, intereations with exchange, such as placing new order or order cancel, requires work with <b>blockchain node api directly</b>.
+Examples can be found in **Trading API** section.
+
+
+Alcor support multiple EOSIO blockchains. Here is dex contract accounts across supported cahins:
+
+- WAX - alcordexmain
+- EOS - eostokensdex
+- TELOS - eostokensdex
+- Proton - alcor
+
+You can easly interacting with alcor contracts using **[EOSJS library](https://github.com/EOSIO/eosjs)**. 
+
+Alternatives:
+
+* [greymass/eosio-core](https://github.com/greymass/eosio-core)
+* [eosnetworkfoundation/mandel-eosjs](https://github.com/eosnetworkfoundation/mandel-eosjs)
+
 
 
 # Market Data
@@ -372,12 +401,11 @@ curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/cha
         "volume": 1759.5935863099999
     }
 ]
-]
 ```
 
 ### HTTP Request
 
-`GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook`
+`GET https://alcor.exchange/api/v2/tickers/:ticker_id/charts`
 
 
 ### Query Parameters
@@ -391,48 +419,406 @@ resolution | true | string | Resolution
 from | false | timestamp | Start time for getting historical candles
 to | false | timestamp | End time till which query candles
 
-**Resolutions**
+**Supported resolutions:**
 
-Value | Description
------ | ----------
-1 | 1 min
-5 | 5 min
-15 | 15 min
-30 | 30 min
-60 | one hour
-240 | 4 hours
-1D | one day
-1W | one week
-1M | one month
+`1, 5, 15, 30, 60, 240, 1D, 1W, 1M`
 
-## Get pools (Swap page)
-TODO
+# OnChain Data
+To fetch data (orders/markets) directly from blockchain you have to use NodeAPI
 
+Contract tables structute can be found here [https://docs.alcor.exchange](https://docs.alcor.exchange/developers-api/contract-tables)
 
-## Get Pool charts
-TOD
+## Markets
+```shell
+cleos -u https://wax.greymass.com get table alcordexmain alcordexmain markets
+```
 
-# WebSocket
+```javascript
+import fetch from 'node-fetch'
+import { Api, JsonRpc, RpcError } from 'eosjs'
 
-# Trade API
-Alcor support multiple EOSIO blockchains. Here is contract accounts across supported cahins:
+const rpc = new JsonRpc('https://wax.greymass.com', { fetch })
 
-- WAX - alcordexmain
-- EOS - eostokensdex
-- TELOS - eostokensdex
-- Proton - alcor
+// Get markets
+const { rows } = await rpc.get_table_rows({
+  code: 'alcordexmain', // dex account
+  table: 'buyorder', // side
+  limit: 1000,
+  scope: 'alcordexmain', // scope same as contract name
+})
+```
 
-You can easly interacting with alcor contracts using **[EOSJS library](https://github.com/EOSIO/eosjs)**. 
+> The above command returns JSON structured like this:
+
+```json
+{
+  "rows": [{
+      "id": 0,
+      "base_token": {
+        "sym": "8,WAX",
+        "contract": "eosio.token"
+      },
+      "quote_token": {
+        "sym": "4,PGL",
+        "contract": "prospectorsw"
+      },
+      "min_buy": "0.00000100 WAX",
+      "min_sell": "0.0001 PGL",
+      "frozen": 0,
+      "fee": 0
+    }, ...]
+}
+```
+Markets are stored in **markets** table, scoped by contract name.
 
 <aside class="notice">
-<b>ATTENTION!</b> Due the legacy codebase of dex smart contract, the <b>base</b> and <b>quote</b> are mixed up in places.
+<b>ATTENTION!</b> <br> Due the legacy codebase of dex smart contract, the naming of <b>base</b> and <b>quote</b> are mixed up in places.
 So in the market table on dex contract, the <b>base_token</b> is actually <b>quote_token</b> and vice versa.
 </aside>
 
+**market_id** are used as scope for orders table and should be provided as parameter for canceling order.
+
+### Table structute
+key | description
+---- | -----
+id | market_id
+base_token | target currency
+quote_token | base_token currency
+min_buy |  Min buy amount
+min_sell | Min sell amount
+frozen | Market are frozen if 1
+fee | Market fee
+
+## Orders
+```shell
+cleos -u https://wax.greymass.com get table alcordexmain 26 buyorder -l 2
+```
+
+```javascript
+import fetch from 'node-fetch'
+import { Api, JsonRpc, RpcError } from 'eosjs'
+
+const rpc = new JsonRpc('https://wax.greymass.com', { fetch })
+
+// Get buy orderbook from conract table
+
+const { rows } = await rpc.get_table_rows({
+  code: 'alcordexmain',
+  table: 'buyorder',
+  limit: 1000, // limit up to 1000
+  scope: 26, // Market id from /api/markets or markets table
+  key_type: 'i128', // we are using it for getting order sorted by price.
+  index_position: 2
+})
+```
+> The above command returns JSON structured like this:
+
+
+```json
+{
+  "rows": [{
+      "id": 28,
+      "account": "pxawpxawpxaw",
+      "bid": "10.00000000 WAX",
+      "ask": "1999.9560 TLM",
+      "unit_price": "500012",
+      "timestamp": 1603653505
+    },{
+      "id": 276,
+      "account": "e43am.waa",
+      "bid": "35.00000000 WAX",
+      "ask": "5000.0000 TLM",
+      "unit_price": "700000",
+      "timestamp": 1609173873
+    }
+  ],
+  "more": true,
+  "next_key": "558"
+}
+```
+
+Orders are stored in **buyorder** and **sellorder** tables.
+Scoped by market_id(you can find one in **markets** table)
+
+### Table structute
+key | description
+---- | -----
+id | order id
+account | order owner account
+unit_price | Price in integer
+timestamp | Order time creation
+
+# WebSocket
+```javascript
+import { io } from 'socket.io-client'
+
+const socket = io('https://alcor.exchange')
+```
+Alcor using [Socket.IO](https://socket.io/) for interact via WebSocket technology.
+
+**There are two commands for subscribing to and channel with specific information.**
+
+* **subscribe**: Subscribing for an specific room.
+* **unsubscribe**: Unsubscribe from sprcific room.
+
+**You can subscribe to rooms to receive specific event information.**
+
+* deals
+* ticker
+* account
+* orderbook
+
+## Deals
+```javascript
+// Subscribe to deals
+socket.emit('subscribe', {
+    room: 'deals',
+    params: {
+        chain: 'wax', // Chain
+        market: 26 // Market id
+    }
+})
+
+// Handle new deals
+socket.on('new_deals', deals => { ... })
+
+// Unsubscribe from deals (will unsubscribe from all markets)
+socket.emit('unsubscribe', { room: 'deals', params: { chain: 'wax' } })
+```
+
+> Responce:
+
+```json
+[
+    {
+      "time": 1674820074000,
+      "ask": 3.5771,
+      "bid": 0.99799129,
+      "type": "buymatch",
+      "unit_price": 0.27899985,
+      "trx_id": "d4acaa5ae75bccad12ca82dd2d1d3fa5822cece1307ced10ee0daefaeb6d5009"
+    }
+]
+```
+
+Subscribing to new deals for specific market.
+
+**Room name**: deals
+
+**Params**:
+
+Key | Value
+--- | ---
+chain | chain id
+market | market id
+
+## Orderbook
+```javascript
+// Subscribe to buy orderbook of 26 (TLM on wax) market.
+socket.emit('subscribe', {
+    room: 'deals',
+    params: {
+        chain: 'orderbook', // Chain
+        market: 26, // Market id,
+        side: 'buy'
+    }
+})
+
+// On orderbook bid side update
+socket.on('orderbook_buy', bids => { ... })
+
+// On orderbook ask side update
+socket.on('orderbook_sell', asks => { ... })
+
+// Unsubscribe from orderbook (all, buy and sell)
+socket.emit('unsubscribe', { room: 'orderbook', params: { chain: 'wax', market: 26 } })
+```
+
+> Responce:
+
+```json
+[
+    [
+      27899985,
+      3044158,
+      8493196253
+    ]
+]
+```
+
+Subscribe to orderbook updates. First update is full order book state.
+
+**Room name**: orderbook
+
+**Params**:
+
+Key | Value
+--- | ---
+chain | chain id
+market | market id
+side | **sell** or **buy**
+
+## Ticker
+```javascript
+// Subscribe
+socket.emit('subscribe', {
+  room: 'ticker',
+  params: {
+    chain: 'wax',
+    market: 26,
+    resolution: '30'
+  }
+})
+
+// Unsubscribe
+socket.emit('unsubscribe', {
+  room: 'ticker',
+  params: {
+    chain: 'wax',
+    market: 26,
+    resolution: '30'
+  }
+})
+
+```
+
+> Responce:
+
+```json
+[
+  "tick",
+  {
+    "close": 0.01175084,
+    "open": 0.01175084,
+    "high": 0.01175084,
+    "low": 0.01175084,
+    "volume": 0.11727339,
+    "time": 1674821301500
+  }
+]
+```
+
+Subscribe for chart updates.
+
+**Room name**: ticker
+
+**Params**:
+
+Key | Value
+--- | ---
+chain | chain id
+market | market id
+resolution | Resolution (see list below)
+
+Supported resolutions:
+
+`1, 5, 15, 30, 60, 240, 1D, 1W, 1M`
+
+## Account
+```javascript
+socket.emit('subscribe', {
+    room: 'account', params: {
+        chain: 'wax',
+        'name': 'randomuser' // Account for listen events
+    }
+})
+```
+
+> Responce
+
+```json
+[
+  "match",
+  {
+    "ask": 0.11727339,
+    "market_id": 156,
+    "price": 0.01175084
+  }
+]
+```
+
+Subscribe to account events/notifications. Only order matches for now.
+
+**Room name**: account
+
+**Params**:
+
+Key | Value
+--- | ---
+chain | chain id
+name | Account
+
+# Trade API
+To trade assets you sould use Blockchain API directly. More information on Interaction/NodeAPI.
 
 ## Place order
-TODO
+```shell
+cleos push action tktoken transfer \
+    '[bob, alcordexmain, "0.5000 TKT", "0.0010 EOS@eosio.token"]' -p bob
+```
+```javascript
+const actions = [{
+  account: 'tktoken', // token contract
+  name: 'transfer',
+  authorization: [{
+    actor: 'useraaaaaaaa', // account placing order (owner)
+    permission: 'active',
+  }],
+  data: {
+    from: 'useraaaaaaaa',
+    to: 'alcordexmain',
+    quantity: '0.5000 TKT', // Bid
+    memo: '0.0001 EOS@eosio.token' // Ask
+  }
+}]
 
-## Place multiple orders
+// Result of transaction
+const r = await api.transact(actions)
+```
+
+> Bob are selling 0.5 TKT and buying 0.001 EOS.
+
+
+Send the amount(bid) you want to sell to dex contract account, and specify the amount you ask in the memo, the price and market will be automatically determined in the contract.
+
+Memo format(ask token):
+`<token_amount> <token_symbol>@<token_contract>`
+
+<aside class="notice">
+    Orders can not be updated. To update order simply cancel current and place new one.
+</aside>
+
+### Place multiple orders
+Same way as described but transaction may contain multiple actions(array).
 
 ## Cancel order
+```shell
+cleos push action alcordexmain cancelsell \
+    '[bob, 262, 1284277]' -p bob
+```
+```javascript
+const result = await api.transact([
+    {
+        account: 'tktoken',
+        name: 'transfer',
+        authorization: [{
+          actor: 'useraccountname',
+          permission: 'active',
+        }],
+        data: {
+          from: 'useraccountname',
+          to: 'alcordexmain',
+          quantity: '0.5000 TKT',
+          memo: '0.0010 EOS@eosio.token'
+        }
+    }
+]);
+```
+
+> Bob are canceling sell order on 262 market.
+
+Call action **cancelsell** or **cancelbuy** with parameters:
+
+* **executor** - order owner account name
+* **market_id** - id of the order related market
+* **order_id** - order id.
