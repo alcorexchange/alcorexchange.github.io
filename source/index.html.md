@@ -106,41 +106,117 @@ curl "https://alcor.exchange/api/v2/pairs"
 > The above command returns JSON structured like this:
 
 ```json
-{
+[
+  {
     "base": {
-        "contract": "prospectorsw",
-        "precision": 4,
-        "symbol": "PGL"
+      "id": "pgl-prospectorsw",
+      "contract": "prospectorsw",
+      "symbol": "PGL",
+      "precision": 4
     },
     "target": {
-        "contract": "eosio.token",
-        "precision": 8,
-        "symbol": "WAX"
+      "id": "wax-eosio.token",
+      "contract": "eosio.token",
+      "symbol": "WAX",
+      "precision": 8
     },
-    "ticker_id": "PGL-prospectorsw_WAX-eosio.token"
-}
+    "ticker_id": "pgl-prospectorsw_wax-eosio.token"
+  }
+]
 ```
-
-### Responce
-Name | Type | Description
----------- | --------------------------- | ----------- | -----------
-ticker_id | string | Identifier of a ticker with delimiter to separate base/target
-base | string | Symbol code of a the base cryptoasset PIXEL
-target | string | Symbol code of the target cryptoasset WAX
 
 ### HTTP Request
 
 `GET https://alcor.exchange/api/v2/pairs`
 
-## Get Ticker
-TODO
+**Query params:**
 
-## Get Tickers
-Endpoint provides pricing and volume information on each market pair available on an exchange.
+Name | Type | Description
+--- | --- | ---
+base | string | Filter pair by base currency id
+target | string | Filter pair by target currency id
+
+ie: `https://alcor.exchange/api/v2/pairs?base=tlm-alien.worlds`
+
+### Responce
+Name | Type | Description
+---------- | --------------------------- | ----------- | -----------
+ticker_id | string | Identifier of a ticker with delimiter to separate base/target
+base | string | Symbol code of a the base cryptoasset
+target | string | Symbol code of the target cryptoasset
+
+<aside class="notice">
+    In EOSIO eny contract can be deployed as token and have any Symbol.
+    Therefore the unique identifier contains the name of the contract to avoid confusion.
+</aside>
+
+
+
+## Get Ticker
+```shell
+curl "https://alcor.exchange/api/v2/tickers/tlm-alien.worlds_wax-eosio.token"
+```
+> The above command returns JSON structured like this:
+
+```json
+{
+    "ticker_id": "tlm-alien.worlds_wax-eosio.token",
+    "market_id": 26,
+    "target_currency": "wax-eosio.token",
+    "base_currency": "tlm-alien.worlds",
+    "min_buy": "0.50000000 WAX",
+    "min_sell": "1.0000 TLM",
+    "last_price": 0.32448004,
+    "change24": 3.42,
+    "high24": 0.34088342,
+    "low24": 0.30488872,
+    "bid": 0.32448004,
+    "ask": 0.32580358,
+    "base_volume": 100178.36015088,
+    "target_volume": 314152.7801
+    "frozen": false,
+    "fee": 20,
+}
+```
+
+Endpoint provides pricing and volume information on sprcific ticker.
 
 Ticker ID represented as base token (Symbol-contract) _ quote_token (Symbol-contract)
-example: <b>RDA-deadcitytokn_WAX-eosio.token</b>
+example: <b>rda-deadcitytokn_wax-eosio.token</b>
 
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/tickers/:ticker_id`
+
+### Query Parameters
+
+Parameter | Mandatory | Type | Description
+--------- | ------- | ----------- | --
+ticker_id | true | string | Ticker id
+
+### Responce
+Name | Type | Description
+---------- | --------------------------- | ----------- | -----------
+ticker_id | string | Identifier of a ticker
+base_currency | string | Symbol code of a the base cryptoasset
+target_currency | string | Symbol code of the target cryptoasset
+min_buy | string | Minimum amount of target currency
+min_sell | string | Minimum amount of base currency
+last_price | number | Price of the latest deal
+change24 | number | Price change in 24 hours positive/negative
+high24 | number | Highest price in 24 hours
+low24 | number | Lowest price in 24
+bid | number | Price of current highest buy order
+ask | number | Price of current cheapest sell order
+base_volume | number | 24H Volume of base currency
+target_volume | number | 24H Volume of target currency
+frozen | boolean | Trading are frozen
+fee | number | Market fees represented as 0.01%
+
+
+
+## Get Tickers
 ```shell
 curl "https://alcor.exchange/api/v2/tickers"
 ```
@@ -149,29 +225,27 @@ curl "https://alcor.exchange/api/v2/tickers"
 ```json
 [
     {
-        "market_id": 656,
-        "ticker_id": "WNG-waxpnftgames_WAX-eosio.token",
-        "base_currency": "WNG-waxpnftgames",
-        "target_currency": "WAX-eosio.token",
-        "last_price": 0.0002,
-        "base_volume": 332,
-        "target_volume": 12,
-        "bid": 0.0002505,
-        "ask": 0.099,
-        "high24": 0.0002,
-        "low24": 0.0002,
-        "change24": 0,
-        "fee": 0,
+        "ticker_id": "tlm-alien.worlds_wax-eosio.token",
+        "market_id": 26,
+        "target_currency": "wax-eosio.token",
+        "base_currency": "tlm-alien.worlds",
+        "min_buy": "0.50000000 WAX",
+        "min_sell": "1.0000 TLM",
+        "last_price": 0.32448004,
+        "change24": 3.42,
+        "high24": 0.34088342,
+        "low24": 0.30488872,
+        "bid": 0.32448004,
+        "ask": 0.32580358,
+        "base_volume": 100178.36015088,
+        "target_volume": 314152.7801
         "frozen": false,
-        "min_buy": "1.00000000 WAX",
-        "min_sell": "0.00000001 WNG",
-        "quote_volume": 0,
-        "volume24": 0,
-        "volumeMonth": 1600.234234,
-        "volumeWeek": 40.24999686
+        "fee": 20,
     }
 ]
 ```
+
+Endpoint provides pricing and volume information on each market pair available on an exchange.
 
 
 ### HTTP Request
@@ -189,9 +263,21 @@ tickers | false | array | Array of ticker_id's, for getting only selected ticker
 ### Responce
 Name | Type | Description
 ---------- | --------------------------- | ----------- | -----------
-ticker_id | string | Identifier of a ticker with delimiter to separate base/target
-base | string | Symbol code of a the base cryptoasset PIXEL
-target | string | Symbol code of the target cryptoasset WAX
+ticker_id | string | Identifier of a ticker
+base_currency | string | Symbol code of a the base cryptoasset
+target_currency | string | Symbol code of the target cryptoasset
+min_buy | string | Minimum amount of target currency
+min_sell | string | Minimum amount of base currency
+last_price | number | Price of the latest deal
+change24 | number | Price change in 24 hours positive/negative
+high24 | number | Highest price in 24 hours
+low24 | number | Lowest price in 24
+bid | number | Price of current highest buy order
+ask | number | Price of current cheapest sell order
+base_volume | number | 24H Volume of base currency
+target_volume | number | 24H Volume of target currency
+frozen | boolean | Trading are frozen
+fee | number | Market fees represented as 0.01%
 
 
 ## Get Orderbook
@@ -264,7 +350,7 @@ asks | array | Array of asks. ask structure: [price, quantity]
 Retrieve the most recent deals of a ticker, sorted by time from latest to oldest.
 
 ```shell
-curl "https://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades"
+curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/latest_trades?limit=2"
 ```
 > The above command returns JSON structured like this:
 
@@ -343,23 +429,21 @@ Parameter | Type | Description
 --------- | ------- | -----------
 type | string | Filter by "sell" or "buy" trades
 limit | integer | Number of trades to retrieve
-step | integer | Offset, can be changed for step-by-step loading of the entire history
-start_time | timestamp | Start time from which to query trades
-end_time | timestamp | End time for historical trades
+step | integer | Offset, used for step-by-step loading of the entire history
+from | timestamp | Start time from which to query trades (milliseconds)
+to | timestamp | End time for historical trades (milliseconds)
 
 ### Responce
 Name | Type | Description
 ---------- | --------------------------- | ----------- | -----------
-trade_id | string | A unique ID associated with the trade for the currency pair transaction
+trade_id | string | A unique ID associated with the trade
 price | decimal | Transaction price.
 base_volume | decimal | Transaction amount in base pair volume
 target_volume | decimal | Transaction amount in target pair volume.
 time | timestamp | Unix timestamp in milliseconds for when the transaction occurred.
-type | string |  Used to determine the type of the transaction that was completed.
+type | string |  Type of the transaction that was completed.
 
 ## Get Klines (Candles)
-This endpoint retrieves klines for specific ticker in a specific range.
-
 ```shell
 curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/charts?resolution=60&from=1637856799500&to=1637869859000"
 ```
@@ -383,25 +467,10 @@ curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/cha
         "open": 0.57009415,
         "time": 1637859602500,
         "volume": 817.85241392
-    },
-    {
-        "close": 0.5889,
-        "high": 0.589,
-        "low": 0.553,
-        "open": 0.5889,
-        "time": 1637863204500,
-        "volume": 32.12719794
-    },
-    {
-        "close": 0.59,
-        "high": 0.589,
-        "low": 0.55999979,
-        "open": 0.5889,
-        "time": 1637866965000,
-        "volume": 1759.5935863099999
     }
 ]
 ```
+This endpoint retrieves klines for specific ticker in a specific range.
 
 ### HTTP Request
 
