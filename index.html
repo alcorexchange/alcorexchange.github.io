@@ -325,7 +325,18 @@
               </ul>
           </li>
           <li>
-            <a href="#market-data" class="toc-h1 toc-link" data-title="Market Data">Market Data</a>
+            <a href="#tokens" class="toc-h1 toc-link" data-title="Tokens">Tokens</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#retrieve-all-tokens" class="toc-h2 toc-link" data-title="Retrieve all tokens">Retrieve all tokens</a>
+                  </li>
+                  <li>
+                    <a href="#retrieve-a-specific-token" class="toc-h2 toc-link" data-title="Retrieve a Specific Token">Retrieve a Specific Token</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#spot-trading-data" class="toc-h1 toc-link" data-title="Spot Trading Data">Spot Trading Data</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#get-trading-pairs" class="toc-h2 toc-link" data-title="Get Trading pairs">Get Trading pairs</a>
@@ -456,7 +467,141 @@ Examples can be found in <strong>Trading API</strong> section.</p>
 <li><a href="https://github.com/greymass/eosio-core">greymass/eosio-core</a></li>
 <li><a href="https://github.com/eosnetworkfoundation/mandel-eosjs">eosnetworkfoundation/mandel-eosjs</a></li>
 </ul>
-<h1 id='market-data'>Market Data</h1>
+<h1 id='tokens'>Tokens</h1><h2 id='retrieve-all-tokens'>Retrieve all tokens</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/tokens
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alien.worlds"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TLM"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"system_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.287224</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"usd_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.015525</span><span class="w">
+  </span><span class="p">}</span><span class="err">,</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax-eosio.token"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"system_price"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"usd_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.054052</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div><h3 id='http-request'>HTTP Request</h3>
+<p><code>GET https://wax.alcor.exchange/api/v2/tokens</code></p>
+<h3 id='responce'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>contract</td>
+<td>string</td>
+<td>Token contract</td>
+</tr>
+<tr>
+<td>decimals</td>
+<td>string</td>
+<td>Token precision</td>
+</tr>
+<tr>
+<td>symbol</td>
+<td>string</td>
+<td>Token symbol</td>
+</tr>
+<tr>
+<td>id</td>
+<td>string</td>
+<td>Token id</td>
+</tr>
+<tr>
+<td>system_price</td>
+<td>string</td>
+<td>Token price in terms of network system token</td>
+</tr>
+<tr>
+<td>usd_price</td>
+<td>string</td>
+<td>Token price in terms of US dollar</td>
+</tr>
+</tbody></table>
+<h2 id='retrieve-a-specific-token'>Retrieve a Specific Token</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/tokens/tlm-alien.worlds
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alien.worlds"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TLM"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"system_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.287224</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"usd_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.015508</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='http-request-2'>HTTP Request</h3>
+<p><code>GET https://wax.alcor.exchange/api/v2/tokens/tlm-alien.worlds</code></p>
+
+<p><strong>Query params:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>string</td>
+<td>Token id as <strong>symbol-contract</strong></td>
+</tr>
+</tbody></table>
+<h3 id='responce-2'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>contract</td>
+<td>string</td>
+<td>Token contract</td>
+</tr>
+<tr>
+<td>decimals</td>
+<td>string</td>
+<td>Token precision</td>
+</tr>
+<tr>
+<td>symbol</td>
+<td>string</td>
+<td>Token symbol</td>
+</tr>
+<tr>
+<td>id</td>
+<td>string</td>
+<td>Token id</td>
+</tr>
+<tr>
+<td>system_price</td>
+<td>string</td>
+<td>Token price in terms of network system token</td>
+</tr>
+<tr>
+<td>usd_price</td>
+<td>string</td>
+<td>Token price in terms of US dollar</td>
+</tr>
+</tbody></table>
+<h1 id='spot-trading-data'>Spot Trading Data</h1>
 <p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.</p>
 
@@ -517,7 +662,7 @@ All timestamp's are expected to be in milliseconds
     </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pgl-prospectorsw_wax-eosio.token"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
-</span></code></pre></div><h3 id='http-request'>HTTP Request</h3>
+</span></code></pre></div><h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/pairs</code></p>
 
 <p><strong>Query params:</strong></p>
@@ -542,7 +687,7 @@ All timestamp's are expected to be in milliseconds
 </tbody></table>
 
 <p>ie: <code>https://alcor.exchange/api/v2/pairs?base=tlm-alien.worlds</code></p>
-<h3 id='responce'>Responce</h3>
+<h3 id='responce-3'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -599,7 +744,7 @@ All timestamp's are expected to be in milliseconds
 
 <p>Ticker ID represented as concated base and trarge token id&#39;s divided by underscore symbol.
 example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
-<h3 id='http-request-2'>HTTP Request</h3>
+<h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id</code></p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <table><thead>
@@ -617,7 +762,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>Ticker id</td>
 </tr>
 </tbody></table>
-<h3 id='responce-2'>Responce</h3>
+<h3 id='responce-4'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -728,7 +873,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>Endpoint provides pricing and volume information on each market pair available on an exchange.</p>
-<h3 id='http-request-3'>HTTP Request</h3>
+<h3 id='http-request-5'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers</code></p>
 
 <p>Without parameters returns all available tickers</p>
@@ -748,7 +893,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>Array of ticker_id&#39;s, for getting only selected tickers</td>
 </tr>
 </tbody></table>
-<h3 id='responce-3'>Responce</h3>
+<h3 id='responce-5'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -870,7 +1015,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Endpoint using to provide order book information with depth returned for a given ticker. </p>
-<h3 id='http-request-4'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook</code></p>
 <h3 id='query-parameters-3'>Query Parameters</h3>
 <table><thead>
@@ -894,7 +1039,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>The number of market depth on each side</td>
 </tr>
 </tbody></table>
-<h3 id='responce-4'>Responce</h3>
+<h3 id='responce-6'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -943,7 +1088,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
         </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sell"</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
-</span></code></pre></div><h3 id='http-request-5'>HTTP Request</h3>
+</span></code></pre></div><h3 id='http-request-7'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/:ticker_id/latest_trades</code></p>
 <h3 id='query-parameters-4'>Query Parameters</h3>
 <table><thead>
@@ -988,7 +1133,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>Endpoint using to return data on historical completed trades for a given ticker.</p>
-<h3 id='http-request-6'>HTTP Request</h3>
+<h3 id='http-request-8'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/:ticker_id/historical_trades</code></p>
 
 <p>Sorting from lasted to oldest deals</p>
@@ -1026,7 +1171,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>End time for historical trades (milliseconds)</td>
 </tr>
 </tbody></table>
-<h3 id='responce-5'>Responce</h3>
+<h3 id='responce-7'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -1090,7 +1235,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>This endpoint retrieves klines for specific ticker in a specific range.</p>
-<h3 id='http-request-7'>HTTP Request</h3>
+<h3 id='http-request-9'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/charts</code></p>
 <h3 id='query-parameters-6'>Query Parameters</h3>
 <p>from, to, resolution, limit</p>
