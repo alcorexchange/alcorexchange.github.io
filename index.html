@@ -325,18 +325,7 @@
               </ul>
           </li>
           <li>
-            <a href="#tokens" class="toc-h1 toc-link" data-title="Tokens">Tokens</a>
-              <ul class="toc-list-h2">
-                  <li>
-                    <a href="#retrieve-all-tokens" class="toc-h2 toc-link" data-title="Retrieve all tokens">Retrieve all tokens</a>
-                  </li>
-                  <li>
-                    <a href="#retrieve-a-specific-token" class="toc-h2 toc-link" data-title="Retrieve a Specific Token">Retrieve a Specific Token</a>
-                  </li>
-              </ul>
-          </li>
-          <li>
-            <a href="#spot-trading-data" class="toc-h1 toc-link" data-title="Spot Trading Data">Spot Trading Data</a>
+            <a href="#market-data" class="toc-h1 toc-link" data-title="Market Data">Market Data</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#get-trading-pairs" class="toc-h2 toc-link" data-title="Get Trading pairs">Get Trading pairs</a>
@@ -358,6 +347,26 @@
                   </li>
                   <li>
                     <a href="#get-klines-candles" class="toc-h2 toc-link" data-title="Get Klines (Candles)">Get Klines (Candles)</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#swap" class="toc-h1 toc-link" data-title="Swap">Swap</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#pool" class="toc-h2 toc-link" data-title="Pool">Pool</a>
+                  </li>
+                  <li>
+                    <a href="#pools" class="toc-h2 toc-link" data-title="Pools">Pools</a>
+                  </li>
+                  <li>
+                    <a href="#pool-positions" class="toc-h2 toc-link" data-title="Pool Positions">Pool Positions</a>
+                  </li>
+                  <li>
+                    <a href="#account-positions" class="toc-h2 toc-link" data-title="Account Positions">Account Positions</a>
+                  </li>
+                  <li>
+                    <a href="#output-amp-route-calculation" class="toc-h2 toc-link" data-title="Output &amp; Route calculation">Output &amp; Route calculation</a>
                   </li>
               </ul>
           </li>
@@ -417,18 +426,18 @@
 <p>Interaction with Alcor is divided into 2 types:</p>
 
 <ul>
+<li><strong>Interaction with the contract.</strong>
+
+<ul>
+<li>Place/Cancel order.</li>
+<li>Add/Remove LP position.</li>
+</ul></li>
 <li><strong>Obtaining information about the markets using the Alcor API services.</strong>
 
 <ul>
 <li>Market Data</li>
 <li>Liquidity pools Data</li>
 <li>WebSocket Stream</li>
-</ul></li>
-<li><strong>Interaction with the contract.</strong>
-
-<ul>
-<li>Place/Cancel order.</li>
-<li>Add/Remove LP position.</li>
 </ul></li>
 </ul>
 
@@ -467,145 +476,11 @@ Examples can be found in <strong>Trading API</strong> section.</p>
 <li><a href="https://github.com/greymass/eosio-core">greymass/eosio-core</a></li>
 <li><a href="https://github.com/eosnetworkfoundation/mandel-eosjs">eosnetworkfoundation/mandel-eosjs</a></li>
 </ul>
-<h1 id='tokens'>Tokens</h1><h2 id='retrieve-all-tokens'>Retrieve all tokens</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/tokens
-</code></pre></div>
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alien.worlds"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TLM"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"system_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.287224</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"usd_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.015525</span><span class="w">
-  </span><span class="p">}</span><span class="err">,</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax-eosio.token"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"system_price"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"usd_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.054052</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre></div><h3 id='http-request'>HTTP Request</h3>
-<p><code>GET https://wax.alcor.exchange/api/v2/tokens</code></p>
-<h3 id='responce'>Responce</h3>
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>contract</td>
-<td>string</td>
-<td>Token contract</td>
-</tr>
-<tr>
-<td>decimals</td>
-<td>string</td>
-<td>Token precision</td>
-</tr>
-<tr>
-<td>symbol</td>
-<td>string</td>
-<td>Token symbol</td>
-</tr>
-<tr>
-<td>id</td>
-<td>string</td>
-<td>Token id</td>
-</tr>
-<tr>
-<td>system_price</td>
-<td>string</td>
-<td>Token price in terms of network system token</td>
-</tr>
-<tr>
-<td>usd_price</td>
-<td>string</td>
-<td>Token price in terms of US dollar</td>
-</tr>
-</tbody></table>
-<h2 id='retrieve-a-specific-token'>Retrieve a Specific Token</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/tokens/tlm-alien.worlds
-</code></pre></div>
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alien.worlds"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TLM"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"system_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.287224</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"usd_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.015508</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div><h3 id='http-request-2'>HTTP Request</h3>
-<p><code>GET https://wax.alcor.exchange/api/v2/tokens/tlm-alien.worlds</code></p>
-
-<p><strong>Query params:</strong></p>
-
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>id</td>
-<td>string</td>
-<td>Token id as <strong>symbol-contract</strong></td>
-</tr>
-</tbody></table>
-<h3 id='responce-2'>Responce</h3>
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>contract</td>
-<td>string</td>
-<td>Token contract</td>
-</tr>
-<tr>
-<td>decimals</td>
-<td>string</td>
-<td>Token precision</td>
-</tr>
-<tr>
-<td>symbol</td>
-<td>string</td>
-<td>Token symbol</td>
-</tr>
-<tr>
-<td>id</td>
-<td>string</td>
-<td>Token id</td>
-</tr>
-<tr>
-<td>system_price</td>
-<td>string</td>
-<td>Token price in terms of network system token</td>
-</tr>
-<tr>
-<td>usd_price</td>
-<td>string</td>
-<td>Token price in terms of US dollar</td>
-</tr>
-</tbody></table>
-<h1 id='spot-trading-data'>Spot Trading Data</h1>
+<h1 id='market-data'>Market Data</h1>
 <p>Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
 WebSocket allows streaming for orderbook updates, new deals, and account events.</p>
 
-<p>Token symbol repesented as <b>symbol-contract</b>
+<p>Token symbol repesented as <b>SYMBOL_contract</b>
 following the eosio.token standard. As the one symbol can be deployed by multiple contracts.</p>
 <h4 id='url-structure'>URL Structure</h4>
 <p>HTTP API URL are separated by chains using following structute.
@@ -640,7 +515,7 @@ All timestamp's are expected to be in milliseconds
 </aside>
 <h2 id='get-trading-pairs'>Get Trading pairs</h2>
 <p>Provides a list of all trading pairs on the Alcor DEX.</p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://wax.alcor.exchange/api/v2/pairs?base=PGL-prospectorsw"</span>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/pairs"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -662,7 +537,7 @@ All timestamp's are expected to be in milliseconds
     </span><span class="nl">"ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pgl-prospectorsw_wax-eosio.token"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
-</span></code></pre></div><h3 id='http-request-3'>HTTP Request</h3>
+</span></code></pre></div><h3 id='http-request'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/pairs</code></p>
 
 <p><strong>Query params:</strong></p>
@@ -687,7 +562,7 @@ All timestamp's are expected to be in milliseconds
 </tbody></table>
 
 <p>ie: <code>https://alcor.exchange/api/v2/pairs?base=tlm-alien.worlds</code></p>
-<h3 id='responce-3'>Responce</h3>
+<h3 id='responce'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -726,8 +601,8 @@ All timestamp's are expected to be in milliseconds
     </span><span class="nl">"market_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">26</span><span class="p">,</span><span class="w">
     </span><span class="nl">"target_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax-eosio.token"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"base_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"min_buy"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"min_sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"min_buy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.50000000 WAX"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"min_sell"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0000 TLM"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"last_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.32448004</span><span class="p">,</span><span class="w">
     </span><span class="nl">"change24"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.42</span><span class="p">,</span><span class="w">
     </span><span class="nl">"high24"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.34088342</span><span class="p">,</span><span class="w">
@@ -742,9 +617,9 @@ All timestamp's are expected to be in milliseconds
 </span></code></pre></div>
 <p>Endpoint provides pricing and volume information on sprcific ticker.</p>
 
-<p>Ticker ID represented as concated base and trarge token id&#39;s divided by underscore symbol.
+<p>Ticker ID represented as base token (Symbol-contract) _ quote_token (Symbol-contract)
 example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
-<h3 id='http-request-4'>HTTP Request</h3>
+<h3 id='http-request-2'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id</code></p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <table><thead>
@@ -762,7 +637,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>Ticker id</td>
 </tr>
 </tbody></table>
-<h3 id='responce-4'>Responce</h3>
+<h3 id='responce-2'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -787,13 +662,13 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </tr>
 <tr>
 <td>min_buy</td>
-<td>number</td>
-<td>Minimum order amount of target currency</td>
+<td>string</td>
+<td>Minimum amount of target currency</td>
 </tr>
 <tr>
 <td>min_sell</td>
-<td>number</td>
-<td>Minimum order amount of base currency</td>
+<td>string</td>
+<td>Minimum amount of base currency</td>
 </tr>
 <tr>
 <td>last_price</td>
@@ -857,8 +732,8 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
         </span><span class="nl">"market_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">26</span><span class="p">,</span><span class="w">
         </span><span class="nl">"target_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax-eosio.token"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"base_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"min_buy"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"min_sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"min_buy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.50000000 WAX"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"min_sell"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0000 TLM"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"last_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.32448004</span><span class="p">,</span><span class="w">
         </span><span class="nl">"change24"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.42</span><span class="p">,</span><span class="w">
         </span><span class="nl">"high24"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.34088342</span><span class="p">,</span><span class="w">
@@ -873,7 +748,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>Endpoint provides pricing and volume information on each market pair available on an exchange.</p>
-<h3 id='http-request-5'>HTTP Request</h3>
+<h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers</code></p>
 
 <p>Without parameters returns all available tickers</p>
@@ -893,7 +768,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>Array of ticker_id&#39;s, for getting only selected tickers</td>
 </tr>
 </tbody></table>
-<h3 id='responce-5'>Responce</h3>
+<h3 id='responce-3'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -918,13 +793,13 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </tr>
 <tr>
 <td>min_buy</td>
-<td>number</td>
-<td>Minimum order amount of target currency</td>
+<td>string</td>
+<td>Minimum amount of target currency</td>
 </tr>
 <tr>
 <td>min_sell</td>
-<td>number</td>
-<td>Minimum order amount of base currency</td>
+<td>string</td>
+<td>Minimum amount of base currency</td>
 </tr>
 <tr>
 <td>last_price</td>
@@ -1014,8 +889,8 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
-<p>Endpoint using to provide order book information with depth returned for a given ticker. </p>
-<h3 id='http-request-6'>HTTP Request</h3>
+<p>Endpoint using to provide order book information with at least depth = 3 returned for a given ticker. </p>
+<h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/orderbook</code></p>
 <h3 id='query-parameters-3'>Query Parameters</h3>
 <table><thead>
@@ -1036,10 +911,10 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>depth</td>
 <td>false</td>
 <td>300</td>
-<td>The number of market depth on each side</td>
+<td>The number of market depth to return on each side</td>
 </tr>
 </tbody></table>
-<h3 id='responce-6'>Responce</h3>
+<h3 id='responce-4'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -1050,7 +925,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <tr>
 <td>ticker_id</td>
 <td>string</td>
-<td>Identifier of a ticker</td>
+<td>Identifier of a ticker with delimiter to separate base/target</td>
 </tr>
 <tr>
 <td>bids</td>
@@ -1088,7 +963,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
         </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sell"</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
-</span></code></pre></div><h3 id='http-request-7'>HTTP Request</h3>
+</span></code></pre></div><h3 id='http-request-5'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/:ticker_id/latest_trades</code></p>
 <h3 id='query-parameters-4'>Query Parameters</h3>
 <table><thead>
@@ -1133,7 +1008,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>Endpoint using to return data on historical completed trades for a given ticker.</p>
-<h3 id='http-request-8'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/:ticker_id/historical_trades</code></p>
 
 <p>Sorting from lasted to oldest deals</p>
@@ -1156,7 +1031,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>Number of trades to retrieve</td>
 </tr>
 <tr>
-<td>skip</td>
+<td>step</td>
 <td>integer</td>
 <td>Offset, used for step-by-step loading of the entire history</td>
 </tr>
@@ -1171,7 +1046,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>End time for historical trades (milliseconds)</td>
 </tr>
 </tbody></table>
-<h3 id='responce-7'>Responce</h3>
+<h3 id='responce-5'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -1210,7 +1085,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>Type of the transaction that was completed.</td>
 </tr>
 </tbody></table>
-<h2 id='get-klines-candles'>Get Klines (Candles)</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/charts?resolution=60&amp;from=1637856799500&amp;to=1637859602500"</span>
+<h2 id='get-klines-candles'>Get Klines (Candles)</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/charts?resolution=60&amp;from=1637856799500&amp;to=1637869859000"</span>
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -1235,7 +1110,7 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>This endpoint retrieves klines for specific ticker in a specific range.</p>
-<h3 id='http-request-9'>HTTP Request</h3>
+<h3 id='http-request-7'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/tickers/:ticker_id/charts</code></p>
 <h3 id='query-parameters-6'>Query Parameters</h3>
 <p>from, to, resolution, limit</p>
@@ -1277,6 +1152,727 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <p><strong>Supported resolutions:</strong></p>
 
 <p><code>1, 5, 15, 30, 60, 240, 1D, 1W, 1M</code></p>
+<h1 id='swap'>Swap</h1>
+<p>Alcor is a protocol based on the AMM concept using concentrated liquidity. Allowing you to change one eosio.token to another.
+<aside class="notice">
+A detailed description of the principle of operation can be found in the documentation: <a href="https://docs.alcor.exchange/alcor-swap/introduction">Alcor Swap
+Docs</a> and <a href="https://docs.alcor.exchange/developers-api/amm-swap-contract-api">Amm Swap Contract API</a></p>
+
+<p>And special <a href="https://github.com/alcorexchange/alcor-v2-sdk">Alcor Swap SDK</a> for calculating everything locally, without
+API.
+</aside></p>
+<h2 id='pool'>Pool</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://alcor.exchange/api/v2/swap/pools/0
+</code></pre></div>
+<p>Get pool by ID</p>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"fee"</span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"feeGrowthGlobalAX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9307845419186303"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"feeGrowthGlobalBX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"22437890212470170135"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"feeProtocol"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"liquidity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2722342918068"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"maxLiquidityPerTick"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1247497401346422"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"protocolFeeA"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"protocolFeeB"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sqrtPriceX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"927838452430150101433"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tick"</span><span class="p">:</span><span class="w"> </span><span class="mi">78363</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tickSpacing"</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tokenA"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alien.worlds"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TLM"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mf">2029423.4615</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"tokenB"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax-eosio.token"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mf">484856.14399924</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"volumeUSD24"</span><span class="p">:</span><span class="w"> </span><span class="mf">10852.00129475753</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeUSDMonth"</span><span class="p">:</span><span class="w"> </span><span class="mf">325050.1299264305</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeUSDWeek"</span><span class="p">:</span><span class="w"> </span><span class="mf">74048.454004721</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeA24"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeAMonth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeAWeek"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeB24"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeBMonth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"volumeBWeek"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p><strong>Query params:</strong></p>
+
+<p>Pool id should be provided inside the URL structure</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>pool_id</td>
+<td>number</td>
+<td>Pool ID</td>
+<td>true</td>
+</tr>
+</tbody></table>
+<h3 id='http-request-8'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/swap/pools/:&lt;pool_id&gt;</code></p>
+<h3 id='responce-6'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>number</td>
+<td>pool ID</td>
+</tr>
+<tr>
+<td>active</td>
+<td>number</td>
+<td>is pool active</td>
+</tr>
+<tr>
+<td>fee</td>
+<td>number</td>
+<td>fee percent as part of (fee / 10000)</td>
+</tr>
+<tr>
+<td>feeGrowthGlobalAX64</td>
+<td>number</td>
+<td>Global accumulated fee for token A</td>
+</tr>
+<tr>
+<td>feeGrowthGlobalBX64</td>
+<td>number</td>
+<td>Global accumulated fee for token B</td>
+</tr>
+<tr>
+<td>feeProtocol</td>
+<td>number</td>
+<td>Protocol fee percent</td>
+</tr>
+<tr>
+<td>liquidity</td>
+<td>number</td>
+<td>Pool liquidity amount</td>
+</tr>
+<tr>
+<td>maxLiquidityPerTick</td>
+<td>number</td>
+<td>Pool max liquidity ber one tick</td>
+</tr>
+<tr>
+<td>protocolFeeA</td>
+<td>asset</td>
+<td>Protocol earned fees</td>
+</tr>
+<tr>
+<td>protocolFeeB</td>
+<td>asset</td>
+<td>Protocol earned fees</td>
+</tr>
+<tr>
+<td>sqrtPriceX64</td>
+<td>number</td>
+<td>Pool price as sqrtPriceX64</td>
+</tr>
+<tr>
+<td>tick</td>
+<td>number</td>
+<td>Pool current tick</td>
+</tr>
+<tr>
+<td>tickSpacing</td>
+<td>number</td>
+<td>Pool tick spacing</td>
+</tr>
+<tr>
+<td>tokenA</td>
+<td>object</td>
+<td>Token A</td>
+</tr>
+<tr>
+<td>tokenB</td>
+<td>object</td>
+<td>Token B</td>
+</tr>
+<tr>
+<td>volumeUSD24</td>
+<td>number</td>
+<td>USD Volume for 24H</td>
+</tr>
+<tr>
+<td>volumeUSDWeek</td>
+<td>number</td>
+<td>USD Volume for 7D</td>
+</tr>
+<tr>
+<td>volumeUSDMonth</td>
+<td>number</td>
+<td>USD Volume for 30D</td>
+</tr>
+</tbody></table>
+<h2 id='pools'>Pools</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://alcor.exchange/api/v2/swap/pools
+</code></pre></div>
+<p>Get all swap pools</p>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"fee"</span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feeGrowthGlobalAX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9307845419186303"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feeGrowthGlobalBX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"22437890212470170135"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feeProtocol"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"liquidity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2722342918068"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"maxLiquidityPerTick"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1247497401346422"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"protocolFeeA"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"protocolFeeB"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sqrtPriceX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"927838452430150101433"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tick"</span><span class="p">:</span><span class="w"> </span><span class="mi">78363</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tickSpacing"</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenA"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alien.worlds"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TLM"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tlm-alien.worlds"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mf">2029423.4615</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"tokenB"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"decimals"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WAX"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax-eosio.token"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mf">484856.14399924</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"volumeUSD24"</span><span class="p">:</span><span class="w"> </span><span class="mf">10852.00129475753</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeUSDMonth"</span><span class="p">:</span><span class="w"> </span><span class="mf">325050.1299264305</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeUSDWeek"</span><span class="p">:</span><span class="w"> </span><span class="mf">74048.454004721</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeA24"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeAMonth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeAWeek"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeB24"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeBMonth"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"volumeBWeek"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div><h3 id='http-request-9'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/swap/pools</code></p>
+<h3 id='responce-7'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>number</td>
+<td>pool ID</td>
+</tr>
+<tr>
+<td>active</td>
+<td>number</td>
+<td>is pool active</td>
+</tr>
+<tr>
+<td>fee</td>
+<td>number</td>
+<td>fee percent as part of (fee / 10000)</td>
+</tr>
+<tr>
+<td>feeGrowthGlobalAX64</td>
+<td>number</td>
+<td>Global accumulated fee for token A</td>
+</tr>
+<tr>
+<td>feeGrowthGlobalBX64</td>
+<td>number</td>
+<td>Global accumulated fee for token B</td>
+</tr>
+<tr>
+<td>feeProtocol</td>
+<td>number</td>
+<td>Protocol fee percent</td>
+</tr>
+<tr>
+<td>liquidity</td>
+<td>number</td>
+<td>Pool liquidity amount</td>
+</tr>
+<tr>
+<td>maxLiquidityPerTick</td>
+<td>number</td>
+<td>Pool max liquidity ber one tick</td>
+</tr>
+<tr>
+<td>protocolFeeA</td>
+<td>asset</td>
+<td>Protocol earned fees</td>
+</tr>
+<tr>
+<td>protocolFeeB</td>
+<td>asset</td>
+<td>Protocol earned fees</td>
+</tr>
+<tr>
+<td>sqrtPriceX64</td>
+<td>number</td>
+<td>Pool price as sqrtPriceX64</td>
+</tr>
+<tr>
+<td>tick</td>
+<td>number</td>
+<td>Pool current tick</td>
+</tr>
+<tr>
+<td>tickSpacing</td>
+<td>number</td>
+<td>Pool tick spacing</td>
+</tr>
+<tr>
+<td>tokenA</td>
+<td>object</td>
+<td>Token A</td>
+</tr>
+<tr>
+<td>tokenB</td>
+<td>object</td>
+<td>Token B</td>
+</tr>
+<tr>
+<td>volumeUSD24</td>
+<td>number</td>
+<td>USD Volume for 24H</td>
+</tr>
+<tr>
+<td>volumeUSDWeek</td>
+<td>number</td>
+<td>USD Volume for 7D</td>
+</tr>
+<tr>
+<td>volumeUSDMonth</td>
+<td>number</td>
+<td>USD Volume for 30D</td>
+</tr>
+</tbody></table>
+
+<!-- TODO -->
+
+<!-- volumeA24| -->
+
+<!-- volumeAMonth": 0, -->
+
+<!-- volumeAWeek": 0, -->
+
+<!-- volumeB24": 0, -->
+
+<!-- volumeBMonth": 0, -->
+
+<!-- volumeBWeek": 0 -->
+<h2 id='pool-positions'>Pool Positions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/swap/pools/0/positions
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"owner"</span><span class="p">:</span><span class="w"> </span><span class="s2">".11dm.wam"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tickLower"</span><span class="p">:</span><span class="w"> </span><span class="mi">-443580</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tickUpper"</span><span class="p">:</span><span class="w"> </span><span class="mi">443580</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"liquidity"</span><span class="p">:</span><span class="w"> </span><span class="mi">843101</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feeGrowthInsideALastX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feeGrowthInsideBLastX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feesA"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feesB"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"pool"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"amountA"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.6781 TLM"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"amountB"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.42356913 WAX"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>API for getting all positions of pool</p>
+<h3 id='http-request-10'>HTTP Request</h3>
+<p><code>GET https://wax.alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
+
+<p><strong>Query params:</strong></p>
+
+<p>Pool id should be provided inside the URL structure</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>pool_id</td>
+<td>number</td>
+<td>Pool ID</td>
+<td>true</td>
+</tr>
+</tbody></table>
+<h3 id='responce-8'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>number</td>
+<td>position id</td>
+</tr>
+<tr>
+<td>owner</td>
+<td>string</td>
+<td>position owner account</td>
+</tr>
+<tr>
+<td>tickLower</td>
+<td>number</td>
+<td>lower tick of position</td>
+</tr>
+<tr>
+<td>tickUpper</td>
+<td>number</td>
+<td>upper tick of position</td>
+</tr>
+<tr>
+<td>liquidity</td>
+<td>number</td>
+<td>position liquidity amount</td>
+</tr>
+<tr>
+<td>feeGrowthInsideALastX64</td>
+<td>number</td>
+<td>token A fees grow value</td>
+</tr>
+<tr>
+<td>feeGrowthInsideBLastX64</td>
+<td>number</td>
+<td>token B fees grow value</td>
+</tr>
+<tr>
+<td>feesA</td>
+<td>number</td>
+<td>token A accumulated fees</td>
+</tr>
+<tr>
+<td>feesB</td>
+<td>number</td>
+<td>token B accumulated fees</td>
+</tr>
+<tr>
+<td>pool</td>
+<td>number</td>
+<td>pool ID</td>
+</tr>
+<tr>
+<td>amountA</td>
+<td>asset</td>
+<td>Positoin token A amount</td>
+</tr>
+<tr>
+<td>amountB</td>
+<td>asset</td>
+<td>Positoin token B amount</td>
+</tr>
+</tbody></table>
+<h2 id='account-positions'>Account Positions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/account/&lt;account&gt;/positions
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+ </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">13095</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"owner"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alcordexfund"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tickLower"</span><span class="p">:</span><span class="w"> </span><span class="mi">40140</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tickUpper"</span><span class="p">:</span><span class="w"> </span><span class="mi">65520</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"liquidity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1009363631498"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feeGrowthInsideALastX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feeGrowthInsideBLastX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feesA"</span><span class="p">:</span><span class="w"> </span><span class="s2">"41789.8580 BRWL"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"feesB"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1873.58385095 WAX"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"pool"</span><span class="p">:</span><span class="w"> </span><span class="mi">667</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"depositedUSDTotal"</span><span class="p">:</span><span class="w"> </span><span class="mf">9782.8141</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"closed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"collectedFees"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"tokenA"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"tokenB"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"inUSD"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"inRange"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"amountA"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0000 BRWL"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"amountB"</span><span class="p">:</span><span class="w"> </span><span class="s2">"192032.76838783 WAX"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalValue"</span><span class="p">:</span><span class="w"> </span><span class="mf">7755.19</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"pNl"</span><span class="p">:</span><span class="w"> </span><span class="mf">-2027.6241</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>API for getting all positions belong to specific account</p>
+<h3 id='http-request-11'>HTTP Request</h3>
+<p><code>GET https://wax.alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
+
+<p><strong>Query params:</strong></p>
+
+<p>Pool id should be provided inside the URL structure</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>pool_id</td>
+<td>number</td>
+<td>Pool ID</td>
+<td>true</td>
+</tr>
+</tbody></table>
+<h3 id='responce-9'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>number</td>
+<td>position id</td>
+</tr>
+<tr>
+<td>owner</td>
+<td>string</td>
+<td>position owner account</td>
+</tr>
+<tr>
+<td>tickLower</td>
+<td>number</td>
+<td>lower tick of position</td>
+</tr>
+<tr>
+<td>tickUpper</td>
+<td>number</td>
+<td>upper tick of position</td>
+</tr>
+<tr>
+<td>liquidity</td>
+<td>number</td>
+<td>position liquidity amount</td>
+</tr>
+<tr>
+<td>feeGrowthInsideALastX64</td>
+<td>number</td>
+<td>token A fees grow value</td>
+</tr>
+<tr>
+<td>feeGrowthInsideBLastX64</td>
+<td>number</td>
+<td>token B fees grow value</td>
+</tr>
+<tr>
+<td>feesA</td>
+<td>number</td>
+<td>token A accumulated fees</td>
+</tr>
+<tr>
+<td>feesB</td>
+<td>number</td>
+<td>token B accumulated fees</td>
+</tr>
+<tr>
+<td>pool</td>
+<td>number</td>
+<td>pool ID</td>
+</tr>
+<tr>
+<td>amountA</td>
+<td>asset</td>
+<td>Positoin token A amount</td>
+</tr>
+<tr>
+<td>amountB</td>
+<td>asset</td>
+<td>Positoin token B amount</td>
+</tr>
+</tbody></table>
+
+<p>depositedUSDTotal | number | total USD value deposited to position
+closed | number | is position closed
+collectedFees | object | Fees collected by position
+inRange | Boolean | is position in range
+totalValue | number | Total position value in USD
+pNl | number | Profit &amp; Loss (totalValue - depositedUSDTotal)</p>
+<h2 id='output-amp-route-calculation'>Output &amp; Route calculation</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&amp;input=wax-eosio.token&amp;output=tlm-alien.worlds&amp;amount=1.00000000&amp;slippage=0.30&amp;receiver=alcordexfund&amp;maxHops=2"</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"executionPrice"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"denominator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"100000000"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"numerator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"39285"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00000000"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"maxSent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00000000"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"memo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"swapexactin#0#alcordexfund#3.9167 TLM@alien.worlds#0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"minReceived"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.9167"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.9285"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"priceImpact"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.3"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"route"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="mi">0</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Finding the best route for given input/output</p>
+
+<p>To calculate output amount based on input amount use trade_type <b>EXACT_INPUT</b>
+To calculate input amount based on output amount use trade_type <b>EXACT_OUTPUT</b></p>
+
+<aside class="notice">
+EXACT_OUTPUT Will charge + 0.3% more imput amount for slippage, and will refund it within swap transaction.
+</aside>
+<h3 id='http-request-12'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/swapRouter/getRoute</code></p>
+
+<p><strong>Query params:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>trade_type</td>
+<td>string</td>
+<td>EXACT_OUTPUT or EXACT_INPUT</td>
+<td>true</td>
+</tr>
+<tr>
+<td>input</td>
+<td>string</td>
+<td>Input token ID</td>
+<td>true</td>
+</tr>
+<tr>
+<td>output</td>
+<td>string</td>
+<td>Output token ID</td>
+<td>true</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>number</td>
+<td>Amount of input/output(depends on trade_type)</td>
+<td>true</td>
+</tr>
+<tr>
+<td>slippage</td>
+<td>number</td>
+<td>permissible slippage</td>
+<td>false</td>
+</tr>
+<tr>
+<td>receiver</td>
+<td>string</td>
+<td>Account to receive output</td>
+<td>false</td>
+</tr>
+<tr>
+<td>maxHops</td>
+<td>number</td>
+<td>Maximum number of intermediate pools for exchange route</td>
+<td>false</td>
+</tr>
+</tbody></table>
+<h3 id='responce-10'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>executionPrice</td>
+<td>object</td>
+<td>Execution price in format for Price object from Swap-SDK.</td>
+</tr>
+<tr>
+<td>input</td>
+<td>number</td>
+<td>Input Amount</td>
+</tr>
+<tr>
+<td>output</td>
+<td>number</td>
+<td>Output Amount</td>
+</tr>
+<tr>
+<td>maxSent</td>
+<td>number</td>
+<td>Amount(with slippage included) to get exact output</td>
+</tr>
+<tr>
+<td>memo</td>
+<td>string</td>
+<td>Memo for the transfer action</td>
+</tr>
+<tr>
+<td>minReceived</td>
+<td>number</td>
+<td>Amount to receive with max slippage</td>
+</tr>
+<tr>
+<td>priceImpact</td>
+<td>number</td>
+<td>Swap price impact percent</td>
+</tr>
+<tr>
+<td>route</td>
+<td>array[number]</td>
+<td>Sequence of the pools id&#39;s that swap will use</td>
+</tr>
+</tbody></table>
 <h1 id='onchain-data'>OnChain Data</h1>
 <p>To fetch data (orders/markets) directly from blockchain you have to use NodeAPI</p>
 
