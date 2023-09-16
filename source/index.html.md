@@ -72,6 +72,44 @@ Alternatives:
 * [eosnetworkfoundation/mandel-eosjs](https://github.com/eosnetworkfoundation/mandel-eosjs)
 
 
+# Tokens
+
+## All tokens prices
+```shell
+curl https://alcor.exchange/api/v2/tokens
+```
+
+> The above command returns JSON structured like this:
+
+```json
+[
+  {
+    "contract": "alien.worlds",
+    "decimals": 4,
+    "symbol": "TLM",
+    "id": "tlm-alien.worlds",
+    "system_price": 0.252009,
+    "usd_price": 0.010197
+  },
+  ...
+]
+```
+
+Get all tokens with it's prices
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/tokens`
+
+### Responce
+Name | Type | Description
+---------- | --------------------------- | ----------- | -----------
+contract | string | token contract
+decimals | number | token precision
+symbol | string | token symbol
+id | string | token-id
+system_price | number | token price in chain system token
+usd_price | number | token price in USD
 
 # Market Data
 Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
