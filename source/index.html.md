@@ -74,6 +74,41 @@ Alternatives:
 
 # Tokens
 
+## Token price
+```shell
+curl https://alcor.exchange/api/v2/tokens/tlm-alien.worlds
+
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "contract": "alien.worlds",
+  "decimals": 4,
+  "symbol": "TLM",
+  "id": "tlm-alien.worlds",
+  "system_price": 0.252009,
+  "usd_price": 0.010197
+}
+```
+
+Get single token price by id
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/tokens/:<token_id>`
+
+### Responce
+Name | Type | Description
+---------- | --------------------------- | ----------- | -----------
+contract | string | token contract
+decimals | number | token precision
+symbol | string | token symbol
+id | string | token-id
+system_price | number | token price in chain system token
+usd_price | number | token price in USD
+
 ## All tokens prices
 ```shell
 curl https://alcor.exchange/api/v2/tokens
