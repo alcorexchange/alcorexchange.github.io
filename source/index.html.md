@@ -237,6 +237,8 @@ curl "https://alcor.exchange/api/v2/tickers/tlm-alien.worlds_wax-eosio.token"
     "market_id": 26,
     "target_currency": "wax-eosio.token",
     "base_currency": "tlm-alien.worlds",
+    "target_cmc_ucid": 825,
+    "base_cmc_ucid": 2300
     "min_buy": "0.50000000 WAX",
     "min_sell": "1.0000 TLM",
     "last_price": 0.32448004,
@@ -274,6 +276,8 @@ Name | Type | Description
 ticker_id | string | Identifier of a ticker
 base_currency | string | Symbol code of a the base cryptoasset
 target_currency | string | Symbol code of the target cryptoasset
+target_cmc_ucid | number | CMC integration target token UCID
+base_cmc_ucid | number | CMC integration base token UCID
 min_buy | string | Minimum amount of target currency
 min_sell | string | Minimum amount of base currency
 last_price | number | Price of the latest deal
@@ -285,7 +289,7 @@ ask | number | Price of current cheapest sell order
 base_volume | number | 24H Volume of base currency
 target_volume | number | 24H Volume of target currency
 frozen | boolean | Trading are frozen
-fee | number | Market fees represented as 0.01%
+fee | number | Market fees represented as % of 1000 (fee / 1000)
 
 
 
