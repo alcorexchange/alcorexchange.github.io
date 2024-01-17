@@ -582,42 +582,49 @@ Get pool by ID
 ```json
 {
   "chain": "wax",
-  "id": 0,
+  "id": 1095,
   "active": true,
   "fee": 3000,
-  "feeGrowthGlobalAX64": "9307845419186303",
-  "feeGrowthGlobalBX64": "22437890212470170135",
-  "feeProtocol": 0,
-  "liquidity": "2722342918068",
+  "feeGrowthGlobalAX64": "212803631582389957186",
+  "feeGrowthGlobalBX64": "1171129874747599",
+  "feeProtocol": 3,
+  "liquidity": "951789470700",
   "maxLiquidityPerTick": "1247497401346422",
-  "protocolFeeA": 0,
-  "protocolFeeB": 0,
-  "sqrtPriceX64": "927838452430150101433",
-  "tick": 78363,
+  "protocolFeeA": 10681.09414088,
+  "protocolFeeB": 703.6308,
+  "sqrtPriceX64": "45802571509710763",
+  "tick": -119973,
   "tickSpacing": 60,
   "tokenA": {
-    "contract": "alien.worlds",
-    "decimals": 4,
-    "symbol": "TLM",
-    "id": "tlm-alien.worlds",
-    "quantity": 2029423.4615
-  },
-  "tokenB": {
     "contract": "eosio.token",
     "decimals": 8,
     "symbol": "WAX",
     "id": "wax-eosio.token",
-    "quantity": 484856.14399924
+    "quantity": 1413257.13064633
   },
-  "volumeUSD24": 10852.00129475753,
-  "volumeUSDMonth": 325050.1299264305,
-  "volumeUSDWeek": 74048.454004721,
-  "volumeA24": 0,
-  "volumeAMonth": 0,
-  "volumeAWeek": 0,
-  "volumeB24": 0,
-  "volumeBMonth": 0,
-  "volumeBWeek": 0
+  "tokenB": {
+    "contract": "usdt.alcor",
+    "decimals": 4,
+    "symbol": "USDT",
+    "id": "usdt-usdt.alcor",
+    "quantity": 81673.5964
+  },
+  "volumeA24": 60225.61186526,
+  "volumeAMonth": 12102207.71289808,
+  "volumeAWeek": 2865840.95504714,
+  "volumeB24": 3703.4195999999997,
+  "volumeBMonth": 823163.2468,
+  "volumeBWeek": 175806.8865,
+  "volumeUSD24": 7440.385309538387,
+  "volumeUSDMonth": 1649849.915091903,
+  "volumeUSDWeek": 353479.23752087017,
+  "tvlUSD": 168895.21809226653,
+  "change24": 0.3,
+  "changeWeek": -0.49,
+  "high24": 0,
+  "low24": 0,
+  "priceA": 0.0623307,
+  "priceB": 16.0435
 }
 ```
 
@@ -653,6 +660,22 @@ tokenB | object | Token B
 volumeUSD24 | number | USD Volume for 24H
 volumeUSDWeek | number | USD Volume for 7D
 volumeUSDMonth | number | USD Volume for 30D
+volumeA24 | number | 24H volume of token A
+volumeAWeek | number | 7D volume of token A
+volumeAMonth | number | 30D volume of token A
+volumeB24 | number | 24H volume of token B
+volumeBWeek | number | 7D volume of token B
+volumeBMonth | number | 30D volume of token B
+volumeUSD24 | number | USD Volume for 24H
+volumeUSDWeek | number | USD Volume for 7D
+volumeUSDMonth | number | USD Volume for 30D
+tvlUSD | number | Total Value Locked in USD
+change24 | number | 24H price change
+changeWeek | number | 7D price change
+high24 | number | 24H price high
+low24 | number | 24H price low
+priceA | number | token A price in terms of token B
+priceB | number | token B price in terms of token A
 
 
 ## Pools
@@ -668,43 +691,50 @@ Get all swap pools
 [
   {
     "chain": "wax",
-    "id": 0,
+    "id": 1095,
     "active": true,
     "fee": 3000,
-    "feeGrowthGlobalAX64": "9307845419186303",
-    "feeGrowthGlobalBX64": "22437890212470170135",
-    "feeProtocol": 0,
-    "liquidity": "2722342918068",
+    "feeGrowthGlobalAX64": "212803631582389957186",
+    "feeGrowthGlobalBX64": "1171129874747599",
+    "feeProtocol": 3,
+    "liquidity": "951789470700",
     "maxLiquidityPerTick": "1247497401346422",
-    "protocolFeeA": 0,
-    "protocolFeeB": 0,
-    "sqrtPriceX64": "927838452430150101433",
-    "tick": 78363,
+    "protocolFeeA": 10681.09414088,
+    "protocolFeeB": 703.6308,
+    "sqrtPriceX64": "45802571509710763",
+    "tick": -119973,
     "tickSpacing": 60,
     "tokenA": {
-      "contract": "alien.worlds",
-      "decimals": 4,
-      "symbol": "TLM",
-      "id": "tlm-alien.worlds",
-      "quantity": 2029423.4615
-    },
-    "tokenB": {
       "contract": "eosio.token",
       "decimals": 8,
       "symbol": "WAX",
       "id": "wax-eosio.token",
-      "quantity": 484856.14399924
+      "quantity": 1413257.13064633
     },
-    "volumeUSD24": 10852.00129475753,
-    "volumeUSDMonth": 325050.1299264305,
-    "volumeUSDWeek": 74048.454004721,
-    "volumeA24": 0,
-    "volumeAMonth": 0,
-    "volumeAWeek": 0,
-    "volumeB24": 0,
-    "volumeBMonth": 0,
-    "volumeBWeek": 0
-  },
+    "tokenB": {
+      "contract": "usdt.alcor",
+      "decimals": 4,
+      "symbol": "USDT",
+      "id": "usdt-usdt.alcor",
+      "quantity": 81673.5964
+    },
+    "volumeA24": 60225.61186526,
+    "volumeAMonth": 12102207.71289808,
+    "volumeAWeek": 2865840.95504714,
+    "volumeB24": 3703.4195999999997,
+    "volumeBMonth": 823163.2468,
+    "volumeBWeek": 175806.8865,
+    "volumeUSD24": 7440.385309538387,
+    "volumeUSDMonth": 1649849.915091903,
+    "volumeUSDWeek": 353479.23752087017,
+    "tvlUSD": 168895.21809226653,
+    "change24": 0.3,
+    "changeWeek": -0.49,
+    "high24": 0,
+    "low24": 0,
+    "priceA": 0.0623307,
+    "priceB": 16.0435
+  }
   ...
 ]
 ```
@@ -730,17 +760,23 @@ tick | number | Pool current tick
 tickSpacing | number | Pool tick spacing
 tokenA | object | Token A
 tokenB | object | Token B
+volumeA24 | number | 24H volume of token A
+volumeAWeek | number | 7D volume of token A
+volumeAMonth | number | 30D volume of token A
+volumeB24 | number | 24H volume of token B
+volumeBWeek | number | 7D volume of token B
+volumeBMonth | number | 30D volume of token B
 volumeUSD24 | number | USD Volume for 24H
 volumeUSDWeek | number | USD Volume for 7D
 volumeUSDMonth | number | USD Volume for 30D
+tvlUSD | number | Total Value Locked in USD
+change24 | number | 24H price change
+changeWeek | number | 7D price change
+high24 | number | 24H price high
+low24 | number | 24H price low
+priceA | number | token A price in terms of token B
+priceB | number | token B price in terms of token A
 
-<!-- TODO -->
-<!-- volumeA24| -->
-<!-- volumeAMonth": 0, -->
-<!-- volumeAWeek": 0, -->
-<!-- volumeB24": 0, -->
-<!-- volumeBMonth": 0, -->
-<!-- volumeBWeek": 0 -->
 
 ## Pool Positions
 ```shell
