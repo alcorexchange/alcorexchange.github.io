@@ -21,7 +21,8 @@ meta:
 ---
 
 # Introduction
-Welcome to the Alcor API here you can find all the necessary information on interacting with Alcor.
+Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
+WebSocket allows streaming for orderbook updates, new deals, and account events.
 
 Interaction with Alcor is divided into 2 types:
 
@@ -35,10 +36,22 @@ Interaction with Alcor is divided into 2 types:
 
 Basic documentation can be found here: [docs.alcor.exchange](https://docs.alcor.exchange/)
 
+#### URL Structure
+HTTP API URL are separated by chains using following structute.
+The UI are following same structute as api, they are splitted by subdomains named by chain.
 
-## Alcor API
-Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
-WebSocket allows streaming for orderbook updates, new deals, and account events.
+Chain | URL
+---------- | ---------
+WAX | <b>https://wax.alcor.exchange/api/v2/</b>
+EOS | <b>https://eos.alcor.exchange/api/v2/</b>
+Proton | <b>https://proton.alcor.exchange/api/v2/</b>
+Telos | <b>https://telos.alcor.exchange/api/v2/</b>
+
+
+<aside class="notice">
+All timestamp's are expected to be in milliseconds
+</aside>
+
 
 <aside class="notice">
     Alcor API can be used only for retrieve data. For interacting with blockchain(place/cancel order) use NODE API.
@@ -147,27 +160,8 @@ system_price | number | token price in chain system token
 usd_price | number | token price in USD
 
 # Market Data
-Alcor Exchange has HTTP and WebSocket api. Which can get information on various markets, orderboos, prices, events, and charts.
-WebSocket allows streaming for orderbook updates, new deals, and account events.
-
 Token symbol repesented as <b>SYMBOL_contract</b>
 following the eosio.token standard. As the one symbol can be deployed by multiple contracts.
-
-#### URL Structure
-HTTP API URL are separated by chains using following structute.
-The UI are following same structute as api, they are splitted by subdomains named by chain.
-
-Chain | URL
----------- | ---------
-WAX | <b>https://wax.alcor.exchange/api/v2/</b>
-EOS | <b>https://eos.alcor.exchange/api/v2/</b>
-Proton | <b>https://proton.alcor.exchange/api/v2/</b>
-Telos | <b>https://telos.alcor.exchange/api/v2/</b>
-
-
-<aside class="notice">
-All timestamp's are expected to be in milliseconds
-</aside>
 
 ## Get Trading pairs
 Provides a list of all trading pairs on the Alcor DEX.
