@@ -195,7 +195,7 @@ curl "https://alcor.exchange/api/v2/analytics/global"
 
 ### HTTP Request
 
-`GET https://alcor.exchange/api/v2/pairs`
+`GET https://alcor.exchange/api/v2/analytics/global`
 
 **Query params:**
 
