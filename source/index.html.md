@@ -159,11 +159,77 @@ id | string | token-id
 system_price | number | token price in chain system token
 usd_price | number | token price in USD
 
+# Global Data
+
+## Stats
+Returns global data on TVL, volumes, number of trading pairs, and so on
+
+<aside class="notice">
+  All volume values are displayed in USD
+</aside>
+
+```shell
+curl "https://alcor.exchange/api/v2/analytics/global"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "_id": "wax",
+  "totalValueLocked": 2240718.758763486,
+  "swapValueLocked": 943995.9929317994,
+  "spotValueLocked": 1296722.7658316866,
+  "swapTradingVolume": 344377.66920321307,
+  "spotTradingVolume": 26406.316737205285,
+  "swapFees": 1063.6217236406346,
+  "spotFees": 409.7303415365396,
+  "dailyActiveUsers": 4063,
+  "swapTransactions": 26347,
+  "spotTransactions": 3163,
+  "totalLiquidityPools": 1483,
+  "totalSpotPairs": 808,
+  "totalTradingVolume": 370783.9859404183
+}
+```
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/pairs`
+
+**Query params:**
+
+Name | Type | Description | Default
+--- | --- | --- | ---
+resolution | string | Accumulate results over a certain period of time | 1D
+
+**Supported resolutions:**
+
+`1D, 1W, 1M`
+
+### Responce
+
+Name | Type | Description
+---------- | --------------------------- | -----------
+totalValueLocked | number | Exchange TVL
+swapValueLocked | number | Total AMM Value locked in USD
+spotValueLocked | number | Total spot value locked in open orders
+swapTradingVolume | number | AMM trading volume
+spotTradingVolume | number | Spot trading volume
+swapFees | number | AMM fees
+spotFees | number | Spot fees
+dailyActiveUsers | number | avg Daily active users
+swapTransactions | number | Total AMM swaps for period(resolution)
+spotTransactions | number | Total spot trades for period(resolution)
+totalLiquidityPools | number | Count of AMM pairs
+totalSpotPairs | number | Count of spot pairs
+totalTradingVolume | number | Total trading volume for given period(resolution)
+
 # Market Data
 Token symbol repesented as <b>SYMBOL_contract</b>
 following the eosio.token standard. As the one symbol can be deployed by multiple contracts.
 
-## Get Trading pairs
+## Trading pairs
 Provides a list of all trading pairs on the Alcor DEX.
 
 ```shell
@@ -219,7 +285,7 @@ target | string | Symbol code of the target cryptoasset
 
 
 
-## Get Ticker
+## Ticker
 ```shell
 curl "https://alcor.exchange/api/v2/tickers/tlm-alien.worlds_wax-eosio.token"
 ```
@@ -287,7 +353,7 @@ fee | number | Market fees represented as % of 1000 (fee / 1000)
 
 
 
-## Get Tickers
+## Tickers
 ```shell
 curl "https://alcor.exchange/api/v2/tickers"
 ```
@@ -351,7 +417,7 @@ frozen | boolean | Trading are frozen
 fee | number | Market fees represented as 0.01%
 
 
-## Get Orderbook
+## Orderbook
 ```shell
 curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/orderbook?depth=3"
 ```
@@ -412,7 +478,7 @@ bids | array | Array of bids. bid structure: [price, quantity]
 asks | array | Array of asks. ask structure: [price, quantity]
 
 
-## Get Latest Trades
+## Latest Trades
 Retrieve the most recent deals of a ticker, sorted by time from latest to oldest.
 
 ```shell
@@ -452,7 +518,7 @@ Parameter | Mandatory | Default | Description
 limit | false | 300 | The number of latest trades to return
 
 
-## Get Trade history
+## Trade history
 Retrieve the recent transactions of an instrument, sorted by time from earlyer to latest.
 
 ```shell
@@ -509,7 +575,7 @@ target_volume | decimal | Transaction amount in target pair volume.
 time | timestamp | Unix timestamp in milliseconds for when the transaction occurred.
 type | string |  Type of the transaction that was completed.
 
-## Get Klines (Candles)
+## Klines (Candles)
 ```shell
 curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/charts?resolution=60&from=1637856799500&to=1637869859000"
 ```
