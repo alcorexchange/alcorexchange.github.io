@@ -378,6 +378,8 @@ curl "https://alcor.exchange/api/v2/tickers"
         "target_volume": 314152.7801
         "frozen": false,
         "fee": 20,
+        "target_cmc_ucid": 2300,
+        "base_cmc_ucid": 9119
     }
 ]
 ```
@@ -415,6 +417,8 @@ base_volume | number | 24H Volume of base currency
 target_volume | number | 24H Volume of target currency
 frozen | boolean | Trading are frozen
 fee | number | Market fees represented as 0.01%
+target_cmc_ucid | number | target Unified Cryptoasset ID if exist or null
+base_cmc_ucid | numer | base Unified Cryptoasset ID if exist or null
 
 
 ## Orderbook
