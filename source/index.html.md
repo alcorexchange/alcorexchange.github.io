@@ -513,7 +513,7 @@ curl "https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/lat
 
 ### HTTP Request
 
-`GET https://alcor.exchange/api/v2/:ticker_id/latest_trades`
+`GET https://alcor.exchange/api/v2/tickers/:ticker_id/latest_trades`
 
 ### Query Parameters
 
@@ -555,14 +555,14 @@ Endpoint using to return data on historical completed trades for a given ticker.
 
 ### HTTP Request
 
-`GET https://alcor.exchange/api/v2/:ticker_id/historical_trades`
+`GET https://alcor.exchange/api/v2/tickers/:ticker_id/historical_trades`
 
 Sorting from lasted to oldest deals
 
 ### Query Parameters
 
 Parameter | Type | Description
---------- | ------- | -----------
+--------- | ------- | --------
 type | string | Filter by "sell" or "buy" trades
 limit | integer | Number of trades to retrieve
 step | integer | Offset, used for step-by-step loading of the entire history
