@@ -297,6 +297,7 @@ curl "https://alcor.exchange/api/v2/tickers/tlm-alien.worlds_wax-eosio.token"
     "market_id": 26,
     "target_currency": "wax-eosio.token",
     "base_currency": "tlm-alien.worlds",
+    "global_ticker_id": "TLM_WAX",
     "target_cmc_ucid": 825,
     "base_cmc_ucid": 2300
     "min_buy": "0.50000000 WAX",
@@ -334,6 +335,7 @@ ticker_id | true | string | Ticker id
 Name | Type | Description
 ---------- | --------------------------- | ----------- | -----------
 ticker_id | string | Identifier of a ticker
+global_ticker_id | string | The ticker ID according to the standard of centralized exchanges (null for unpopular tokens)
 base_currency | string | Symbol code of a the base cryptoasset
 target_currency | string | Symbol code of the target cryptoasset
 target_cmc_ucid | number | CMC integration target token UCID
@@ -378,6 +380,7 @@ curl "https://alcor.exchange/api/v2/tickers"
         "target_volume": 314152.7801
         "frozen": false,
         "fee": 20,
+        "global_ticker_id": "TLM_WAX",
         "target_cmc_ucid": 2300,
         "base_cmc_ucid": 9119
     }
@@ -417,6 +420,7 @@ base_volume | number | 24H Volume of base currency
 target_volume | number | 24H Volume of target currency
 frozen | boolean | Trading are frozen
 fee | number | Market fees represented as 0.01%
+global_ticker_id | string | The ticker ID according to the standard of centralized exchanges (null for unpopular tokens)
 target_cmc_ucid | number | target Unified Cryptoasset ID if exist or null
 base_cmc_ucid | numer | base Unified Cryptoasset ID if exist or null
 
