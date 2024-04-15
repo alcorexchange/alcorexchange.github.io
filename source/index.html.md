@@ -312,6 +312,8 @@ curl "https://alcor.exchange/api/v2/tickers/tlm-alien.worlds_wax-eosio.token"
     "target_volume": 314152.7801
     "frozen": false,
     "fee": 20,
+    "base_amm_liquidity": 3710.6035,
+    "target_amm_liquidity": 649.92427661
 }
 ```
 
@@ -352,7 +354,8 @@ base_volume | number | 24H Volume of base currency
 target_volume | number | 24H Volume of target currency
 frozen | boolean | Trading are frozen
 fee | number | Market fees represented as % of 1000 (fee / 1000)
-
+base_amm_liquidity | number | Total base token liqiudity available on AMM contract
+target_amm_liquidity | number | Total target token liqiudity available on AMM contract
 
 
 ## Tickers
@@ -383,6 +386,8 @@ curl "https://alcor.exchange/api/v2/tickers"
         "global_ticker_id": "TLM_WAX",
         "target_cmc_ucid": 2300,
         "base_cmc_ucid": 9119
+        "base_amm_liquidity": 3710.6035,
+        "target_amm_liquidity": 649.92427661
     }
 ]
 ```
@@ -423,6 +428,8 @@ fee | number | Market fees represented as 0.01%
 global_ticker_id | string | The ticker ID according to the standard of centralized exchanges (null for unpopular tokens)
 target_cmc_ucid | number | target Unified Cryptoasset ID if exist or null
 base_cmc_ucid | numer | base Unified Cryptoasset ID if exist or null
+base_amm_liquidity | number | Total base token liqiudity available on AMM contract
+target_amm_liquidity | number | Total target token liqiudity available on AMM contract
 
 
 ## Orderbook
