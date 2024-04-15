@@ -868,6 +868,8 @@ following the eosio.token standard. As the one symbol can be deployed by multipl
     </span><span class="nl">"target_volume"</span><span class="p">:</span><span class="w"> </span><span class="mf">314152.7801</span><span class="w">
     </span><span class="nl">"frozen"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
     </span><span class="nl">"fee"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"base_amm_liquidity"</span><span class="p">:</span><span class="w"> </span><span class="mf">3710.6035</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"target_amm_liquidity"</span><span class="p">:</span><span class="w"> </span><span class="mf">649.92427661</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>Endpoint provides pricing and volume information on sprcific ticker.</p>
@@ -990,6 +992,16 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>number</td>
 <td>Market fees represented as % of 1000 (fee / 1000)</td>
 </tr>
+<tr>
+<td>base_amm_liquidity</td>
+<td>number</td>
+<td>Total base token liqiudity available on AMM contract</td>
+</tr>
+<tr>
+<td>target_amm_liquidity</td>
+<td>number</td>
+<td>Total target token liqiudity available on AMM contract</td>
+</tr>
 </tbody></table>
 <h2 id='tickers'>Tickers</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers"</span>
 </code></pre></div>
@@ -1017,6 +1029,8 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
         </span><span class="nl">"global_ticker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TLM_WAX"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"target_cmc_ucid"</span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
         </span><span class="nl">"base_cmc_ucid"</span><span class="p">:</span><span class="w"> </span><span class="mi">9119</span><span class="w">
+        </span><span class="nl">"base_amm_liquidity"</span><span class="p">:</span><span class="w"> </span><span class="mf">3710.6035</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"target_amm_liquidity"</span><span class="p">:</span><span class="w"> </span><span class="mf">649.92427661</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
@@ -1138,6 +1152,16 @@ example: <b>rda-deadcitytokn_wax-eosio.token</b></p>
 <td>base_cmc_ucid</td>
 <td>numer</td>
 <td>base Unified Cryptoasset ID if exist or null</td>
+</tr>
+<tr>
+<td>base_amm_liquidity</td>
+<td>number</td>
+<td>Total base token liqiudity available on AMM contract</td>
+</tr>
+<tr>
+<td>target_amm_liquidity</td>
+<td>number</td>
+<td>Total target token liqiudity available on AMM contract</td>
 </tr>
 </tbody></table>
 <h2 id='orderbook'>Orderbook</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/tickers/pgl-prospectorsw_wax-eosio.token/orderbook?depth=3"</span>
