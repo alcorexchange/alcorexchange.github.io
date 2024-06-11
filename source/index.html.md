@@ -857,6 +857,69 @@ priceA | number | token A price in terms of token B
 priceB | number | token B price in terms of token A
 
 
+## Pool Swaps
+
+Retrieve swap transactions for a specific pool.
+
+```shell
+curl "https://alcor.exchange/api/v2/swap/pools/{pool_id}/swaps"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+[
+  {
+    "pool": 0,
+    "recipient": "alice",
+    "trx_id": "b8d6e3dfc47a5a4c93a8ed5f36c2c64b7486dc708d4e7310f9bdf24f7f7b6a11",
+    "sender": "bob",
+    "sqrtPriceX64": "457992170294803",
+    "totalUSDVolume": 10.5,
+    "tokenA": {
+      "contract": "eosio.token",
+      "quantity": "5.0000 WAX"
+    },
+    "tokenB": {
+      "contract": "eosio.token",
+      "quantity": "2.5000 USDT"
+    },
+    "time": 1625097600000
+  }
+]
+```
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/swap/pools/:id/swaps`
+
+### Query Parameters
+
+Name | Type | Description | Required
+--- | --- | --- | ---
+from | timestamp | Start time from which to query swaps (milliseconds) | false
+to | timestamp | End time till which to query swaps (milliseconds) | false
+recipient | string | Account that received the swap | false
+sender | string | Account that sent the swap | false
+limit | integer | Number of swaps to retrieve | false
+skip | integer | Number of swaps to skip | false
+
+### Response
+
+Name | Type | Description
+--- | --- | ---
+pool | number | Pool ID
+recipient | string | Account that received the swap
+trx_id | string | Transaction ID
+sender | string | Account that sent the swap
+sqrtPriceX64 | string | Sqrt price X64
+totalUSDVolume | number | Total USD volume
+tokenA | object | Token A details
+tokenB | object | Token B details
+time | timestamp | Time of the swap (milliseconds)
+
+
+
 ## Pool Positions
 ```shell
 curl https://wax.alcor.exchange/api/v2/swap/pools/0/positions
