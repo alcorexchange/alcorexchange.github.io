@@ -376,6 +376,9 @@
                     <a href="#pools" class="toc-h2 toc-link" data-title="Pools">Pools</a>
                   </li>
                   <li>
+                    <a href="#pool-swaps" class="toc-h2 toc-link" data-title="Pool Swaps">Pool Swaps</a>
+                  </li>
+                  <li>
                     <a href="#pool-positions" class="toc-h2 toc-link" data-title="Pool Positions">Pool Positions</a>
                   </li>
                   <li>
@@ -1949,6 +1952,134 @@ API.
 <td>token B price in terms of token A</td>
 </tr>
 </tbody></table>
+<h2 id='pool-swaps'>Pool Swaps</h2>
+<p>Retrieve swap transactions for a specific pool.</p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/swap/pools/{pool_id}/swaps"</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"pool"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alice"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"trx_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b8d6e3dfc47a5a4c93a8ed5f36c2c64b7486dc708d4e7310f9bdf24f7f7b6a11"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sender"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bob"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sqrtPriceX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"457992170294803"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalUSDVolume"</span><span class="p">:</span><span class="w"> </span><span class="mf">10.5</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenA"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5.0000 WAX"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"tokenB"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"contract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eosio.token"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.5000 USDT"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="mi">1625097600000</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div><h3 id='http-request-13'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/swap/pools/:id/swaps</code></p>
+<h3 id='query-parameters-7'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>from</td>
+<td>timestamp</td>
+<td>Start time from which to query swaps (milliseconds)</td>
+<td>false</td>
+</tr>
+<tr>
+<td>to</td>
+<td>timestamp</td>
+<td>End time till which to query swaps (milliseconds)</td>
+<td>false</td>
+</tr>
+<tr>
+<td>recipient</td>
+<td>string</td>
+<td>Account that received the swap</td>
+<td>false</td>
+</tr>
+<tr>
+<td>sender</td>
+<td>string</td>
+<td>Account that sent the swap</td>
+<td>false</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>integer</td>
+<td>Number of swaps to retrieve</td>
+<td>false</td>
+</tr>
+<tr>
+<td>skip</td>
+<td>integer</td>
+<td>Number of swaps to skip</td>
+<td>false</td>
+</tr>
+</tbody></table>
+<h3 id='response'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>pool</td>
+<td>number</td>
+<td>Pool ID</td>
+</tr>
+<tr>
+<td>recipient</td>
+<td>string</td>
+<td>Account that received the swap</td>
+</tr>
+<tr>
+<td>trx_id</td>
+<td>string</td>
+<td>Transaction ID</td>
+</tr>
+<tr>
+<td>sender</td>
+<td>string</td>
+<td>Account that sent the swap</td>
+</tr>
+<tr>
+<td>sqrtPriceX64</td>
+<td>string</td>
+<td>Sqrt price X64</td>
+</tr>
+<tr>
+<td>totalUSDVolume</td>
+<td>number</td>
+<td>Total USD volume</td>
+</tr>
+<tr>
+<td>tokenA</td>
+<td>object</td>
+<td>Token A details</td>
+</tr>
+<tr>
+<td>tokenB</td>
+<td>object</td>
+<td>Token B details</td>
+</tr>
+<tr>
+<td>time</td>
+<td>timestamp</td>
+<td>Time of the swap (milliseconds)</td>
+</tr>
+</tbody></table>
 <h2 id='pool-positions'>Pool Positions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/swap/pools/0/positions
 </code></pre></div>
 <blockquote>
@@ -1973,7 +2104,7 @@ API.
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>API for getting all positions of pool</p>
-<h3 id='http-request-13'>HTTP Request</h3>
+<h3 id='http-request-14'>HTTP Request</h3>
 <p><code>GET https://wax.alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
 
 <p><strong>Query params:</strong></p>
@@ -2098,7 +2229,7 @@ API.
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>API for getting all positions belong to specific account</p>
-<h3 id='http-request-14'>HTTP Request</h3>
+<h3 id='http-request-15'>HTTP Request</h3>
 <p><code>GET https://wax.alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
 
 <p><strong>Query params:</strong></p>
@@ -2225,7 +2356,7 @@ To calculate input amount based on output amount use trade_type <b>EXACT_OUTPUT<
 <aside class="notice">
 EXACT_OUTPUT Will charge + 0.3% more imput amount for slippage, and will refund it within swap transaction.
 </aside>
-<h3 id='http-request-15'>HTTP Request</h3>
+<h3 id='http-request-16'>HTTP Request</h3>
 <p><code>GET https://alcor.exchange/api/v2/swapRouter/getRoute</code></p>
 
 <p><strong>Query params:</strong></p>
