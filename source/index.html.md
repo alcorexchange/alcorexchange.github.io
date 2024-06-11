@@ -862,7 +862,7 @@ priceB | number | token B price in terms of token A
 Retrieve swap transactions for a specific pool.
 
 ```shell
-curl "https://alcor.exchange/api/v2/swap/pools/{pool_id}/swaps"
+curl "https://alcor.exchange/api/v2/swap/pools/1095/swaps"
 ```
 
 > The above command returns JSON structured like this:
@@ -870,22 +870,17 @@ curl "https://alcor.exchange/api/v2/swap/pools/{pool_id}/swaps"
 ```json
 [
   {
-    "pool": 0,
-    "recipient": "alice",
-    "trx_id": "b8d6e3dfc47a5a4c93a8ed5f36c2c64b7486dc708d4e7310f9bdf24f7f7b6a11",
-    "sender": "bob",
-    "sqrtPriceX64": "457992170294803",
-    "totalUSDVolume": 10.5,
-    "tokenA": {
-      "contract": "eosio.token",
-      "quantity": "5.0000 WAX"
-    },
-    "tokenB": {
-      "contract": "eosio.token",
-      "quantity": "2.5000 USDT"
-    },
-    "time": 1625097600000
-  }
+    "_id": "6528d7e4eef91d4d098a39ef",
+    "pool": 1095,
+    "recipient": "jollewaxacc1",
+    "trx_id": "35b62eb272381b6482272f0022d5778e6154a29b334a87a1bda37251c6acbb2e",
+    "sender": "jollewaxacc1",
+    "sqrtPriceX64": "44952921109377512",
+    "totalUSDVolume": 0.9253599213188954,
+    "tokenA": 17.60908915,
+    "tokenB": -1.0907,
+    "time": "2023-05-06T08:59:51.000Z"
+  },
 ]
 ```
 
@@ -914,8 +909,8 @@ trx_id | string | Transaction ID
 sender | string | Account that sent the swap
 sqrtPriceX64 | string | Sqrt price X64
 totalUSDVolume | number | Total USD volume
-tokenA | object | Token A details
-tokenB | object | Token B details
+tokenA | object | Token A amount
+tokenB | object | Token B amount
 time | timestamp | Time of the swap (milliseconds)
 
 
