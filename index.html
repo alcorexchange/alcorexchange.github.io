@@ -382,10 +382,24 @@
                     <a href="#pool-positions" class="toc-h2 toc-link" data-title="Pool Positions">Pool Positions</a>
                   </li>
                   <li>
+                    <a href="#output-amp-route-calculation" class="toc-h2 toc-link" data-title="Output &amp; Route calculation">Output &amp; Route calculation</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#account" class="toc-h1 toc-link" data-title="Account">Account</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#account-spot-deals" class="toc-h2 toc-link" data-title="Account Spot Deals">Account Spot Deals</a>
+                  </li>
+                  <li>
                     <a href="#account-positions" class="toc-h2 toc-link" data-title="Account Positions">Account Positions</a>
                   </li>
                   <li>
-                    <a href="#output-amp-route-calculation" class="toc-h2 toc-link" data-title="Output &amp; Route calculation">Output &amp; Route calculation</a>
+                    <a href="#account-positions-history" class="toc-h2 toc-link" data-title="Account Positions History">Account Positions History</a>
+                  </li>
+                  <li>
+                    <a href="#account-swap-history" class="toc-h2 toc-link" data-title="Account Swap History">Account Swap History</a>
                   </li>
               </ul>
           </li>
@@ -413,7 +427,7 @@
                     <a href="#ticker-2" class="toc-h2 toc-link" data-title="Ticker">Ticker</a>
                   </li>
                   <li>
-                    <a href="#account" class="toc-h2 toc-link" data-title="Account">Account</a>
+                    <a href="#account-2" class="toc-h2 toc-link" data-title="Account">Account</a>
                   </li>
               </ul>
           </li>
@@ -2075,7 +2089,7 @@ API.
 <td>Time of the swap (milliseconds)</td>
 </tr>
 </tbody></table>
-<h2 id='pool-positions'>Pool Positions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/swap/pools/0/positions
+<h2 id='pool-positions'>Pool Positions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://alcor.exchange/api/v2/swap/pools/0/positions
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -2100,7 +2114,7 @@ API.
 </span></code></pre></div>
 <p>API for getting all positions of pool</p>
 <h3 id='http-request-14'>HTTP Request</h3>
-<p><code>GET https://wax.alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
+<p><code>GET https://alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
 
 <p><strong>Query params:</strong></p>
 
@@ -2190,7 +2204,274 @@ API.
 <td>Positoin token B amount</td>
 </tr>
 </tbody></table>
-<h2 id='account-positions'>Account Positions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://wax.alcor.exchange/api/v2/account/&lt;account&gt;/positions
+<h2 id='output-amp-route-calculation'>Output &amp; Route calculation</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&amp;input=wax-eosio.token&amp;output=tlm-alien.worlds&amp;amount=1.00000000&amp;slippage=0.30&amp;receiver=alcordexfund&amp;maxHops=2"</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"executionPrice"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"denominator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"100000000"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"numerator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"39285"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00000000"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"maxSent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00000000"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"memo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"swapexactin#0#alcordexfund#3.9167 TLM@alien.worlds#0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"minReceived"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.9167"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.9285"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"priceImpact"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.3"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"route"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="mi">0</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Finding the best route for given input/output</p>
+
+<p>To calculate output amount based on input amount use trade_type <b>EXACT_INPUT</b>
+To calculate input amount based on output amount use trade_type <b>EXACT_OUTPUT</b></p>
+
+<aside class="notice">
+EXACT_OUTPUT Will charge + 0.3% more imput amount for slippage, and will refund it within swap transaction.
+</aside>
+<h3 id='http-request-15'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/swapRouter/getRoute</code></p>
+
+<p><strong>Query params:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>trade_type</td>
+<td>string</td>
+<td>EXACT_OUTPUT or EXACT_INPUT</td>
+<td>true</td>
+</tr>
+<tr>
+<td>input</td>
+<td>string</td>
+<td>Input token ID</td>
+<td>true</td>
+</tr>
+<tr>
+<td>output</td>
+<td>string</td>
+<td>Output token ID</td>
+<td>true</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>number</td>
+<td>Amount of input/output(depends on trade_type)</td>
+<td>true</td>
+</tr>
+<tr>
+<td>slippage</td>
+<td>number</td>
+<td>permissible slippage</td>
+<td>false</td>
+</tr>
+<tr>
+<td>receiver</td>
+<td>string</td>
+<td>Account to receive output</td>
+<td>false</td>
+</tr>
+<tr>
+<td>maxHops</td>
+<td>number</td>
+<td>Maximum number of intermediate pools for exchange route</td>
+<td>false</td>
+</tr>
+</tbody></table>
+<h3 id='responce-12'>Responce</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>executionPrice</td>
+<td>object</td>
+<td>Execution price in format for Price object from Swap-SDK.</td>
+</tr>
+<tr>
+<td>input</td>
+<td>number</td>
+<td>Input Amount</td>
+</tr>
+<tr>
+<td>output</td>
+<td>number</td>
+<td>Output Amount</td>
+</tr>
+<tr>
+<td>maxSent</td>
+<td>number</td>
+<td>Amount(with slippage included) to get exact output</td>
+</tr>
+<tr>
+<td>memo</td>
+<td>string</td>
+<td>Memo for the transfer action</td>
+</tr>
+<tr>
+<td>minReceived</td>
+<td>number</td>
+<td>Amount to receive with max slippage</td>
+</tr>
+<tr>
+<td>priceImpact</td>
+<td>number</td>
+<td>Swap price impact percent</td>
+</tr>
+<tr>
+<td>route</td>
+<td>array[number]</td>
+<td>Sequence of the pools id&#39;s that swap will use</td>
+</tr>
+</tbody></table>
+<h1 id='account'>Account</h1>
+<p>Account data api</p>
+<h2 id='account-spot-deals'>Account Spot Deals</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://alcor.exchange/api/v2/account/&lt;account&gt;/deals
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6675d517cbc8490fd50823ab"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"market"</span><span class="p">:</span><span class="w"> </span><span class="mi">763</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"buymatch"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"trx_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"14169e8d274786b984917c79f14cefa4e13d2dc823604d47f88a11c116d9e901"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"unit_price"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0410099</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ask"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.75797508</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"asker"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foreverstone"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"bid"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1131</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"bidder"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alcordexfund"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-06-21T19:31:33.000Z"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>API for getting the spot deals history of a specific account.</p>
+<h3 id='http-request-16'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/account/&lt;account&gt;/deals</code></p>
+
+<p><strong>Query params:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>account</td>
+<td>string</td>
+<td>Account ID</td>
+<td>true</td>
+</tr>
+<tr>
+<td>from</td>
+<td>number</td>
+<td>Start time in seconds</td>
+<td>false</td>
+</tr>
+<tr>
+<td>to</td>
+<td>number</td>
+<td>End time in seconds</td>
+<td>false</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>number</td>
+<td>Limit of records to return</td>
+<td>false</td>
+</tr>
+<tr>
+<td>skip</td>
+<td>number</td>
+<td>Number of records to skip</td>
+<td>false</td>
+</tr>
+<tr>
+<td>market</td>
+<td>number</td>
+<td>Market ID</td>
+<td>false</td>
+</tr>
+</tbody></table>
+<h3 id='response-2'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_id</td>
+<td>string</td>
+<td>Deal ID</td>
+</tr>
+<tr>
+<td>market</td>
+<td>number</td>
+<td>Market ID</td>
+</tr>
+<tr>
+<td>type</td>
+<td>string</td>
+<td>Type of the deal</td>
+</tr>
+<tr>
+<td>trx_id</td>
+<td>string</td>
+<td>Transaction ID</td>
+</tr>
+<tr>
+<td>unit_price</td>
+<td>number</td>
+<td>Unit price</td>
+</tr>
+<tr>
+<td>ask</td>
+<td>number</td>
+<td>Ask amount</td>
+</tr>
+<tr>
+<td>asker</td>
+<td>string</td>
+<td>Asker account</td>
+</tr>
+<tr>
+<td>bid</td>
+<td>number</td>
+<td>Bid amount</td>
+</tr>
+<tr>
+<td>bidder</td>
+<td>string</td>
+<td>Bidder account</td>
+</tr>
+<tr>
+<td>time</td>
+<td>string</td>
+<td>Time of the deal</td>
+</tr>
+</tbody></table>
+<h2 id='account-positions'>Account Positions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://alcor.exchange/api/v2/account/&lt;account&gt;/positions
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -2224,8 +2505,8 @@ API.
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
 <p>API for getting all positions belong to specific account</p>
-<h3 id='http-request-15'>HTTP Request</h3>
-<p><code>GET https://wax.alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
+<h3 id='http-request-17'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/swap/pools/&lt;:pool_id&gt;/positions</code></p>
 
 <p><strong>Query params:</strong></p>
 
@@ -2246,7 +2527,7 @@ API.
 <td>true</td>
 </tr>
 </tbody></table>
-<h3 id='responce-12'>Responce</h3>
+<h3 id='responce-13'>Responce</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -2322,37 +2603,32 @@ collectedFees | object | Fees collected by position
 inRange | Boolean | is position in range
 totalValue | number | Total position value in USD
 pNl | number | Profit &amp; Loss (totalValue - depositedUSDTotal)</p>
-<h2 id='output-amp-route-calculation'>Output &amp; Route calculation</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://alcor.exchange/api/v2/swapRouter/getRoute?trade_type=EXACT_INPUT&amp;input=wax-eosio.token&amp;output=tlm-alien.worlds&amp;amount=1.00000000&amp;slippage=0.30&amp;receiver=alcordexfund&amp;maxHops=2"</span>
+<h2 id='account-positions-history'>Account Positions History</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://alcor.exchange/api/v2/account/&lt;account&gt;/positions-history
 </code></pre></div>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-    </span><span class="nl">"executionPrice"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"denominator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"100000000"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"numerator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"39285"</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="nl">"input"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00000000"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"maxSent"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.00000000"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"memo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"swapexactin#0#alcordexfund#3.9167 TLM@alien.worlds#0"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"minReceived"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.9167"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"output"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.9285"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"priceImpact"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.3"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"route"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="mi">0</span><span class="w">
-    </span><span class="p">]</span><span class="w">
-</span><span class="p">}</span><span class="w">
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"666fe1a9248953a275e29568"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenAUSDPrice"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.04254746</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenBUSDPrice"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.622996928304</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"owner"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alcordexfund"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"collect"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">43827</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"pool"</span><span class="p">:</span><span class="w"> </span><span class="mi">1259</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenA"</span><span class="p">:</span><span class="w"> </span><span class="mf">740.63011288</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenB"</span><span class="p">:</span><span class="w"> </span><span class="mf">39.0449</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalUSDValue"</span><span class="p">:</span><span class="w"> </span><span class="mf">55.8368</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"trx_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cee97277979cee5ffcfa7df078050ecce9026e87b7b3eced7e517e6b10c9348c"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-06-17T07:11:35.000Z"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span><span class="p">]</span><span class="w">
 </span></code></pre></div>
-<p>Finding the best route for given input/output</p>
-
-<p>To calculate output amount based on input amount use trade_type <b>EXACT_INPUT</b>
-To calculate input amount based on output amount use trade_type <b>EXACT_OUTPUT</b></p>
-
-<aside class="notice">
-EXACT_OUTPUT Will charge + 0.3% more imput amount for slippage, and will refund it within swap transaction.
-</aside>
-<h3 id='http-request-16'>HTTP Request</h3>
-<p><code>GET https://alcor.exchange/api/v2/swapRouter/getRoute</code></p>
+<p>API for getting the position history of a specific account.</p>
+<h3 id='http-request-18'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/account/&lt;account&gt;/positions-history</code></p>
 
 <p><strong>Query params:</strong></p>
 
@@ -2361,53 +2637,29 @@ EXACT_OUTPUT Will charge + 0.3% more imput amount for slippage, and will refund 
 <th>Name</th>
 <th>Type</th>
 <th>Description</th>
-<th>required</th>
+<th>Required</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>trade_type</td>
+<td>account</td>
 <td>string</td>
-<td>EXACT_OUTPUT or EXACT_INPUT</td>
+<td>Account ID</td>
 <td>true</td>
 </tr>
 <tr>
-<td>input</td>
-<td>string</td>
-<td>Input token ID</td>
-<td>true</td>
-</tr>
-<tr>
-<td>output</td>
-<td>string</td>
-<td>Output token ID</td>
-<td>true</td>
-</tr>
-<tr>
-<td>amount</td>
+<td>limit</td>
 <td>number</td>
-<td>Amount of input/output(depends on trade_type)</td>
-<td>true</td>
-</tr>
-<tr>
-<td>slippage</td>
-<td>number</td>
-<td>permissible slippage</td>
+<td>Limit of records to return</td>
 <td>false</td>
 </tr>
 <tr>
-<td>receiver</td>
-<td>string</td>
-<td>Account to receive output</td>
-<td>false</td>
-</tr>
-<tr>
-<td>maxHops</td>
+<td>skip</td>
 <td>number</td>
-<td>Maximum number of intermediate pools for exchange route</td>
+<td>Number of records to skip</td>
 <td>false</td>
 </tr>
 </tbody></table>
-<h3 id='responce-13'>Responce</h3>
+<h3 id='response-3'>Response</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -2416,44 +2668,171 @@ EXACT_OUTPUT Will charge + 0.3% more imput amount for slippage, and will refund 
 </tr>
 </thead><tbody>
 <tr>
-<td>executionPrice</td>
-<td>object</td>
-<td>Execution price in format for Price object from Swap-SDK.</td>
-</tr>
-<tr>
-<td>input</td>
-<td>number</td>
-<td>Input Amount</td>
-</tr>
-<tr>
-<td>output</td>
-<td>number</td>
-<td>Output Amount</td>
-</tr>
-<tr>
-<td>maxSent</td>
-<td>number</td>
-<td>Amount(with slippage included) to get exact output</td>
-</tr>
-<tr>
-<td>memo</td>
+<td>_id</td>
 <td>string</td>
-<td>Memo for the transfer action</td>
+<td>Position history ID</td>
 </tr>
 <tr>
-<td>minReceived</td>
+<td>tokenAUSDPrice</td>
 <td>number</td>
-<td>Amount to receive with max slippage</td>
+<td>Token A USD price</td>
 </tr>
 <tr>
-<td>priceImpact</td>
+<td>tokenBUSDPrice</td>
 <td>number</td>
-<td>Swap price impact percent</td>
+<td>Token B USD price</td>
 </tr>
 <tr>
-<td>route</td>
-<td>array[number]</td>
-<td>Sequence of the pools id&#39;s that swap will use</td>
+<td>owner</td>
+<td>string</td>
+<td>Position owner account</td>
+</tr>
+<tr>
+<td>type</td>
+<td>string</td>
+<td>Type of the position history</td>
+</tr>
+<tr>
+<td>id</td>
+<td>number</td>
+<td>Position history ID</td>
+</tr>
+<tr>
+<td>pool</td>
+<td>number</td>
+<td>Pool ID</td>
+</tr>
+<tr>
+<td>tokenA</td>
+<td>number</td>
+<td>Token A amount</td>
+</tr>
+<tr>
+<td>tokenB</td>
+<td>number</td>
+<td>Token B amount</td>
+</tr>
+<tr>
+<td>totalUSDValue</td>
+<td>number</td>
+<td>Total USD value</td>
+</tr>
+<tr>
+<td>trx_id</td>
+<td>string</td>
+<td>Transaction ID</td>
+</tr>
+<tr>
+<td>time</td>
+<td>string</td>
+<td>Time of the position history</td>
+</tr>
+</tbody></table>
+<h2 id='account-swap-history'>Account Swap History</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://alcor.exchange/api/v2/account/&lt;account&gt;/swap-history
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6670108cebb327bcc470ffc3"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"pool"</span><span class="p">:</span><span class="w"> </span><span class="mi">1166</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"trx_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e9815f8ca7af5d56d08a0163ec98f1142db097ee0d356b49cb3fb2182d596006"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sender"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alcordexfund"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sqrtPriceX64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"335692961505657228690"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalUSDVolume"</span><span class="p">:</span><span class="w"> </span><span class="mf">20.3636278111581</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenA"</span><span class="p">:</span><span class="w"> </span><span class="mf">14027.5692</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tokenB"</span><span class="p">:</span><span class="w"> </span><span class="mf">-480.37435682</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-06-17T10:31:37.500Z"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="err">...</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p>API for getting the swap history of a specific account.</p>
+<h3 id='http-request-19'>HTTP Request</h3>
+<p><code>GET https://alcor.exchange/api/v2/account/&lt;account&gt;/swap-history</code></p>
+
+<p><strong>Query params:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>account</td>
+<td>string</td>
+<td>Account ID</td>
+<td>true</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>number</td>
+<td>Limit of records to return</td>
+<td>false</td>
+</tr>
+<tr>
+<td>skip</td>
+<td>number</td>
+<td>Number of records to skip</td>
+<td>false</td>
+</tr>
+</tbody></table>
+<h3 id='response-4'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>_id</td>
+<td>string</td>
+<td>Swap history ID</td>
+</tr>
+<tr>
+<td>pool</td>
+<td>number</td>
+<td>Pool ID</td>
+</tr>
+<tr>
+<td>trx_id</td>
+<td>string</td>
+<td>Transaction ID</td>
+</tr>
+<tr>
+<td>sender</td>
+<td>string</td>
+<td>Swap sender account</td>
+</tr>
+<tr>
+<td>sqrtPriceX64</td>
+<td>string</td>
+<td>Square root price X64</td>
+</tr>
+<tr>
+<td>totalUSDVolume</td>
+<td>number</td>
+<td>Total USD volume</td>
+</tr>
+<tr>
+<td>tokenA</td>
+<td>number</td>
+<td>Token A amount</td>
+</tr>
+<tr>
+<td>tokenB</td>
+<td>number</td>
+<td>Token B amount</td>
+</tr>
+<tr>
+<td>time</td>
+<td>string</td>
+<td>Time of the swap history</td>
 </tr>
 </tbody></table>
 <h1 id='onchain-data'>OnChain Data</h1>
@@ -2797,7 +3176,7 @@ Scoped by market_id(you can find one in <strong>markets</strong> table)</p>
 <p>Supported resolutions:</p>
 
 <p><code>1, 5, 15, 30, 60, 240, 1D, 1W, 1M</code></p>
-<h2 id='account'>Account</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">subscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+<h2 id='account-2'>Account</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">subscribe</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
     <span class="na">room</span><span class="p">:</span> <span class="dl">'</span><span class="s1">account</span><span class="dl">'</span><span class="p">,</span> <span class="na">params</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">chain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span><span class="p">,</span>
         <span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">randomuser</span><span class="dl">'</span> <span class="c1">// Account for listen events</span>
