@@ -3532,7 +3532,7 @@ This service is only available on WAX blockchain.
 </tbody></table>
 
 <aside class="warning">
-When CPU usage exceeds 95%, all hourly limits are reduced by 50%.
+When CPU usage exceeds 70%, all hourly limits are reduced by 50%.
 </aside>
 <h2 id='allowed-contracts'>Allowed Contracts</h2>
 <p>Transactions can only contain actions to whitelisted Alcor contracts:</p>
@@ -3542,9 +3542,10 @@ When CPU usage exceeds 95%, all hourly limits are reduced by 50%.
 <li><code>swap.alcor</code> - AMM Swap</li>
 <li><code>otc.alcor</code> - OTC trading</li>
 <li><code>alcorotcswap</code> - OTC swap</li>
+<li><code>liquid.alcor</code> - CPU payer contract</li>
 </ul>
 
-<p>Plus <code>eosio.token::transfer</code> actions are always allowed.</p>
+<p>Any <code>transfer</code> actions where the recipient (<code>to</code>) is one of the Alcor contracts above are also allowed.</p>
 <h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
