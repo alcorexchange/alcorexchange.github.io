@@ -159,6 +159,29 @@ id | string | token-id
 system_price | number | token price in chain system token
 usd_price | number | token price in USD
 
+## Token Logo
+```shell
+curl https://wax.alcor.exchange/api/v2/tokens/wax-eosio.token/logo
+```
+
+Get token logo image (PNG) by token id.
+
+### HTTP Request
+
+`GET https://alcor.exchange/api/v2/tokens/<token_id>/logo`
+
+### URL Parameters
+Name | Type | Description
+---------- | --------------------------- | -----------
+token_id | string | Token identifier (symbol-contract)
+
+### Response
+Returns PNG image file if logo exists, or 404 error if not found.
+
+<aside class="notice">
+Logo URL can be constructed from token id: /api/v2/tokens/{token_id}/logo
+</aside>
+
 # Global Data
 
 ## Stats
@@ -1677,3 +1700,139 @@ Call action **cancelsell** or **cancelbuy** with parameters:
 * **executor** - order owner account name
 * **market_id** - id of the order related market
 * **order_id** - order id.
+
+# CPU Payer (WAX only)
+
+Alcor provides a free CPU payer service for WAX blockchain that covers transaction CPU costs for users interacting with Alcor contracts. This uses the `ONLY_BILL_FIRST_AUTHORIZER` mechanism.
+
+<aside class="notice">
+This service is only available on WAX blockchain.
+</aside>
+
+## How it works
+
+1. Client checks `/status` endpoint to see if service is available
+2. If available, client builds transaction with `liquid.alcor::noop` as first action
+3. Client signs the transaction (only their actions, noop has payer's auth)
+4. Client sends serialized transaction to `/cosign` endpoint
+5. Worker validates and cosigns for `liquid.alcor@bw`
+6. Client combines signatures and pushes to blockchain
+7. CPU cost is billed to `liquid.alcor` (first authorizer)
+
+## Status
+
+```shell
+curl -X POST https://wax.alcor.exchange/api/v2/cpu/status \
+  -H "Content-Type: application/json"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "available": true,
+  "signing": true,
+  "throttled": false,
+  "cpu": {
+    "used": 100000,
+    "max": 400000,
+    "percent": 25.0
+  },
+  "lastCheck": 1705123456789
+}
+```
+
+Check if CPU payer service is available and signing.
+
+### HTTP Request
+
+`POST https://wax.alcor.exchange/api/v2/cpu/status`
+
+### Response
+
+Name | Type | Description
+--- | --- | ---
+available | boolean | Whether the service is available
+signing | boolean | Whether the service is currently signing transactions
+throttled | boolean | Whether rate limiting is in effect
+cpu | object | Current CPU usage info
+cpu.used | number | Current CPU usage in microseconds
+cpu.max | number | Maximum CPU available in microseconds
+cpu.percent | number | CPU usage percentage
+lastCheck | number | Timestamp of last CPU status check
+
+## Cosign
+
+```shell
+curl -X POST https://wax.alcor.exchange/api/v2/cpu/cosign \
+  -H "Content-Type: application/json" \
+  -d '{"serializedTransaction": "..."}'
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "signature": "SIG_K1_..."
+}
+```
+
+Cosign a pre-built transaction. The transaction must have `liquid.alcor::noop` as the first action with `liquid.alcor@bw` authorization.
+
+### HTTP Request
+
+`POST https://wax.alcor.exchange/api/v2/cpu/cosign`
+
+### Request Body
+
+Name | Type | Description | Required
+--- | --- | --- | ---
+serializedTransaction | string | Hex-encoded serialized transaction | true
+
+### Response
+
+Name | Type | Description
+--- | --- | ---
+signature | string | The payer's signature (SIG_K1_...)
+
+### Errors
+
+```json
+{
+  "error": "Rate limit exceeded"
+}
+```
+
+Error | Description
+--- | ---
+Rate limit exceeded | Too many requests from this IP or account
+Invalid transaction | Transaction format is invalid
+First action must be noop | Transaction doesn't start with liquid.alcor::noop
+Unauthorized contract | Transaction contains actions to non-whitelisted contracts
+Service unavailable | CPU payer is currently disabled or overloaded
+
+## Rate Limits
+
+| Limit | Default | Description |
+|-------|---------|-------------|
+| Per IP (hourly) | 500 | Requests per IP per hour |
+| Per Account (hourly) | 300 | Requests per WAX account per hour |
+| Per IP (daily) | 5000 | Requests per IP per day |
+| Per Account (daily) | 2000 | Requests per WAX account per day |
+| Global (hourly) | 10000 | Total requests per hour |
+| Global (daily) | 80000 | Total requests per day |
+
+<aside class="warning">
+When CPU usage exceeds 95%, all hourly limits are reduced by 50%.
+</aside>
+
+## Allowed Contracts
+
+Transactions can only contain actions to whitelisted Alcor contracts:
+
+* `alcordexmain` - Spot DEX
+* `swap.alcor` - AMM Swap
+* `otc.alcor` - OTC trading
+* `alcorotcswap` - OTC swap
+
+Plus `eosio.token::transfer` actions are always allowed.
