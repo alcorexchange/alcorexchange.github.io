@@ -1823,7 +1823,7 @@ Service unavailable | CPU payer is currently disabled or overloaded
 | Global (daily) | 80000 | Total requests per day |
 
 <aside class="warning">
-When CPU usage exceeds 95%, all hourly limits are reduced by 50%.
+When CPU usage exceeds 70%, all hourly limits are reduced by 50%.
 </aside>
 
 ## Allowed Contracts
@@ -1834,5 +1834,6 @@ Transactions can only contain actions to whitelisted Alcor contracts:
 * `swap.alcor` - AMM Swap
 * `otc.alcor` - OTC trading
 * `alcorotcswap` - OTC swap
+* `liquid.alcor` - CPU payer contract
 
-Plus `eosio.token::transfer` actions are always allowed.
+Any `transfer` actions where the recipient (`to`) is one of the Alcor contracts above are also allowed.
