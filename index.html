@@ -446,6 +446,26 @@
               </ul>
           </li>
           <li>
+            <a href="#cpu-payer-wax-only" class="toc-h1 toc-link" data-title="CPU Payer (WAX only)">CPU Payer (WAX only)</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#how-it-works" class="toc-h2 toc-link" data-title="How it works">How it works</a>
+                  </li>
+                  <li>
+                    <a href="#status" class="toc-h2 toc-link" data-title="Status">Status</a>
+                  </li>
+                  <li>
+                    <a href="#cosign" class="toc-h2 toc-link" data-title="Cosign">Cosign</a>
+                  </li>
+                  <li>
+                    <a href="#rate-limits" class="toc-h2 toc-link" data-title="Rate Limits">Rate Limits</a>
+                  </li>
+                  <li>
+                    <a href="#allowed-contracts" class="toc-h2 toc-link" data-title="Allowed Contracts">Allowed Contracts</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
           </li>
       </ul>
@@ -3310,6 +3330,221 @@ Scoped by market_id(you can find one in <strong>markets</strong> table)</p>
 <li><strong>market_id</strong> - id of the order related market</li>
 <li><strong>order_id</strong> - order id.</li>
 </ul>
+<h1 id='cpu-payer-wax-only'>CPU Payer (WAX only)</h1>
+<p>Alcor provides a free CPU payer service for WAX blockchain that covers transaction CPU costs for users interacting with Alcor contracts. This uses the <code>ONLY_BILL_FIRST_AUTHORIZER</code> mechanism.</p>
+
+<aside class="notice">
+This service is only available on WAX blockchain.
+</aside>
+<h2 id='how-it-works'>How it works</h2>
+<ol>
+<li>Client checks <code>/status</code> endpoint to see if service is available</li>
+<li>If available, client builds transaction with <code>liquid.alcor::noop</code> as first action</li>
+<li>Client signs the transaction (only their actions, noop has payer&#39;s auth)</li>
+<li>Client sends serialized transaction to <code>/cosign</code> endpoint</li>
+<li>Worker validates and cosigns for <code>liquid.alcor@bw</code></li>
+<li>Client combines signatures and pushes to blockchain</li>
+<li>CPU cost is billed to <code>liquid.alcor</code> (first authorizer)</li>
+</ol>
+<h2 id='status'>Status</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST https://wax.alcor.exchange/api/v2/cpu/status <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"available"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"signing"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"throttled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"cpu"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"used"</span><span class="p">:</span><span class="w"> </span><span class="mi">100000</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"max"</span><span class="p">:</span><span class="w"> </span><span class="mi">400000</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"percent"</span><span class="p">:</span><span class="w"> </span><span class="mf">25.0</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"lastCheck"</span><span class="p">:</span><span class="w"> </span><span class="mi">1705123456789</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Check if CPU payer service is available and signing.</p>
+<h3 id='http-request-21'>HTTP Request</h3>
+<p><code>POST https://wax.alcor.exchange/api/v2/cpu/status</code></p>
+<h3 id='response-6'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>available</td>
+<td>boolean</td>
+<td>Whether the service is available</td>
+</tr>
+<tr>
+<td>signing</td>
+<td>boolean</td>
+<td>Whether the service is currently signing transactions</td>
+</tr>
+<tr>
+<td>throttled</td>
+<td>boolean</td>
+<td>Whether rate limiting is in effect</td>
+</tr>
+<tr>
+<td>cpu</td>
+<td>object</td>
+<td>Current CPU usage info</td>
+</tr>
+<tr>
+<td>cpu.used</td>
+<td>number</td>
+<td>Current CPU usage in microseconds</td>
+</tr>
+<tr>
+<td>cpu.max</td>
+<td>number</td>
+<td>Maximum CPU available in microseconds</td>
+</tr>
+<tr>
+<td>cpu.percent</td>
+<td>number</td>
+<td>CPU usage percentage</td>
+</tr>
+<tr>
+<td>lastCheck</td>
+<td>number</td>
+<td>Timestamp of last CPU status check</td>
+</tr>
+</tbody></table>
+<h2 id='cosign'>Cosign</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">-X</span> POST https://wax.alcor.exchange/api/v2/cpu/cosign <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{"serializedTransaction": "..."}'</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"signature"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SIG_K1_..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Cosign a pre-built transaction. The transaction must have <code>liquid.alcor::noop</code> as the first action with <code>liquid.alcor@bw</code> authorization.</p>
+<h3 id='http-request-22'>HTTP Request</h3>
+<p><code>POST https://wax.alcor.exchange/api/v2/cpu/cosign</code></p>
+<h3 id='request-body'>Request Body</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>serializedTransaction</td>
+<td>string</td>
+<td>Hex-encoded serialized transaction</td>
+<td>true</td>
+</tr>
+</tbody></table>
+<h3 id='response-7'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>signature</td>
+<td>string</td>
+<td>The payer&#39;s signature (SIG_K1_...)</td>
+</tr>
+</tbody></table>
+<h3 id='errors'>Errors</h3><div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Rate limit exceeded"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<table><thead>
+<tr>
+<th>Error</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Rate limit exceeded</td>
+<td>Too many requests from this IP or account</td>
+</tr>
+<tr>
+<td>Invalid transaction</td>
+<td>Transaction format is invalid</td>
+</tr>
+<tr>
+<td>First action must be noop</td>
+<td>Transaction doesn&#39;t start with liquid.alcor::noop</td>
+</tr>
+<tr>
+<td>Unauthorized contract</td>
+<td>Transaction contains actions to non-whitelisted contracts</td>
+</tr>
+<tr>
+<td>Service unavailable</td>
+<td>CPU payer is currently disabled or overloaded</td>
+</tr>
+</tbody></table>
+<h2 id='rate-limits'>Rate Limits</h2>
+<table><thead>
+<tr>
+<th>Limit</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Per IP (hourly)</td>
+<td>500</td>
+<td>Requests per IP per hour</td>
+</tr>
+<tr>
+<td>Per Account (hourly)</td>
+<td>300</td>
+<td>Requests per WAX account per hour</td>
+</tr>
+<tr>
+<td>Per IP (daily)</td>
+<td>5000</td>
+<td>Requests per IP per day</td>
+</tr>
+<tr>
+<td>Per Account (daily)</td>
+<td>2000</td>
+<td>Requests per WAX account per day</td>
+</tr>
+<tr>
+<td>Global (hourly)</td>
+<td>10000</td>
+<td>Total requests per hour</td>
+</tr>
+<tr>
+<td>Global (daily)</td>
+<td>80000</td>
+<td>Total requests per day</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+When CPU usage exceeds 95%, all hourly limits are reduced by 50%.
+</aside>
+<h2 id='allowed-contracts'>Allowed Contracts</h2>
+<p>Transactions can only contain actions to whitelisted Alcor contracts:</p>
+
+<ul>
+<li><code>alcordexmain</code> - Spot DEX</li>
+<li><code>swap.alcor</code> - AMM Swap</li>
+<li><code>otc.alcor</code> - OTC trading</li>
+<li><code>alcorotcswap</code> - OTC swap</li>
+</ul>
+
+<p>Plus <code>eosio.token::transfer</code> actions are always allowed.</p>
 <h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
