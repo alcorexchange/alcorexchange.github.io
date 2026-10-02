@@ -33,6 +33,8 @@ Interaction with Alcor is divided into 2 types:
     * Market Data
     * Liquidity pools Data
     * WebSocket Stream
+* **Bringing users' funds in from other chains.**
+    * [Bridge](#bridge): deposit link, embeddable widget and transfer status
 
 Basic documentation can be found here: [docs.alcor.exchange](https://docs.alcor.exchange/)
 
@@ -1837,3 +1839,320 @@ Transactions can only contain actions to whitelisted Alcor contracts:
 * `liquid.alcor` - CPU payer contract
 
 Any `transfer` actions where the recipient (`to`) is one of the Alcor contracts above are also allowed.
+
+# Bridge
+
+The Alcor bridge moves tokens between Ethereum, Telos and WAX. For partners the
+interesting route is **Ethereum → WAX**. The user signs one transaction on
+Ethereum and the bridge delivers the tokens to their WAX account by itself:
+there is nothing to claim and no WAX wallet involved. Small deposits usually
+arrive in 13–20 minutes. The live estimate is in [Chains](#chains).
+
+There are three ways to integrate it:
+
+* **[Deposit link](#deposit-link)**: send users to the Alcor bridge page with the transfer prefilled.
+* **[Deposit widget](#deposit-widget)**: open the bridge over your own page in a modal, popup or inline block.
+* **[Bridge API](#bridge-api)**: read routes, limits, timing and transfer status yourself.
+
+<aside class="notice">
+Supported assets are USDC, USDT and ETH from Ethereum. The authoritative list, with minimums and maximums, is always <a href="#routes">Routes</a>.
+</aside>
+
+## Deposit link
+
+```shell
+https://alcor.exchange/v/wax/bridge?from=ethereum&to=wax&recipient=alice.wam&token=USDC&amount=50&partner=mygame&return_url=https://mygame.io/play
+```
+
+A plain URL to the bridge page with the transfer already filled in. No code is
+needed on your side.
+
+### Query Parameters
+
+Parameter | Example | Description
+--------- | ------- | -----------
+from | `ethereum` | Chain to start on. The user can still change it.
+to | `wax` | Chain the tokens land on.
+recipient | `alice.wam` | Receiving account, prefilled. The user can edit it on this page.
+token | `USDC` | Asset, by the symbol the bridge lists (`USDC`, `USDT`, `ETH`).
+amount | `50` | Prefilled amount, in token units.
+partner | `mygame` | Your id, so the deposits you bring are attributed to you.
+return_url | `https://mygame.io/play` | Shows a "← Back to mygame.io" link. `https` only (`http` is allowed on `localhost`).
+
+All parameters are optional. A malformed value is ignored rather than guessed at.
+
+## Deposit widget
+
+```javascript
+// <script src="https://alcor.exchange/sdk/bridge/v1.js"></script>
+
+document.getElementById('deposit').onclick = function () {
+  AlcorBridge.open({
+    to: 'wax',
+    recipient: 'alice.wam',   // fixed: the user cannot change it
+    token: 'USDC',
+    amount: '50',
+    partner: 'mygame',
+    onSent: function (e) { console.log('on its way', e.transactions) },
+    onFinished: function (e) {
+      if (e.outcome === 'delivered') refreshBalance()
+    },
+    onClose: function () {},
+  })
+}
+```
+
+```shell
+# Without the script: embed the widget yourself
+<iframe src="https://alcor.exchange/embed/bridge?to=wax&recipient=alice.wam&token=USDC&partner=mygame&mode=inline"
+        style="width:100%;max-width:480px;height:640px;border:0"></iframe>
+```
+
+Load `https://alcor.exchange/sdk/bridge/v1.js` and call one of its functions.
+The script is tiny and has no dependencies. The path is versioned:
+`v1.js` keeps its options and events for as long as anyone uses it.
+
+### Functions
+
+Function | Shows | Returns
+-------- | ----- | -------
+`AlcorBridge.open(options)` | Modal over your page | `{ close() }`
+`AlcorBridge.popup(options)` | Separate window. Call it from a click handler. | `{ close() }`, or `null` if the popup was blocked
+`AlcorBridge.mount(element, options)` | Inline iframe that grows with its content | `{ destroy() }`
+`AlcorBridge.url(options)` | Nothing. Returns the widget address for your own iframe or link. | `string`
+
+Browser extension wallets (MetaMask, Rabby) and WalletConnect work in all modes.
+In the popup the user's existing Alcor session and wallet connection carry over.
+
+### Options
+
+Option | Required | Description
+------ | -------- | -----------
+to | true | Chain the tokens land on: `wax`. The widget only offers destinations where the bridge pays out by itself.
+recipient | false | Receiving account. When given, it is **fixed** in the widget. Before anything is signed, the widget checks that the account exists.
+from | false | Chain to start on, `ethereum` by default.
+token | false | `USDC`, `USDT`, `ETH`.
+amount | false | Prefilled amount, in token units.
+partner | false | Your id, for attribution.
+origin | false | Where the widget is served from. Defaults to the origin of the script itself.
+onReady, onSent, onFailed, onFinished, onClose | false | Event callbacks, see below.
+
+### Events
+
+> `onSent` receives:
+
+```json
+{
+  "direction": "hop",
+  "from_chain": "ethereum",
+  "to_chain": "wax",
+  "token": "USDC",
+  "amount": "50",
+  "sender": "0x285202c8db763db06ab42e0705104cb7919ef95e",
+  "recipient": "alice.wam",
+  "partner": "mygame",
+  "embed": "iframe",
+  "transactions": [
+    { "chain": "Ethereum", "label": "Send", "ref": "0x0af8…2917", "url": "https://etherscan.io/tx/0x0af8…2917" }
+  ]
+}
+```
+
+> `onFinished` receives:
+
+```json
+{
+  "key": "d:1:12",
+  "outcome": "delivered",
+  "token": "USDC",
+  "amount": "50",
+  "transactions": [ … ]
+}
+```
+
+Callback | When | Data
+-------- | ---- | ----
+onReady | The widget has loaded and is prefilled | `{ to, recipient }`
+onSent | The user signed and the transfer is on its way | Transfer details and the first transaction
+onFailed | The transfer could not be started, e.g. rejected in the wallet | Transfer details plus `errorCode`, `error`
+onFinished | The transfer reached its end | `{ key, outcome, token, amount, transactions }`
+onClose | The user closed the widget | `{}`
+
+`outcome` is `delivered`, or `returned` if the destination refused the tokens
+and they went back to the sender. `key` identifies the transfer in
+[Transfer status](#transfer-status).
+
+<aside class="warning">
+Credit nothing in your app on <code>onSent</code>. Wait for <code>outcome: "delivered"</code>, or better, check the balance on chain. <code>onFinished</code> only fires while the widget is open. A transfer the user walked away from still completes, and you can follow it with <a href="#transfer-status">Transfer status</a>.
+</aside>
+
+### Messages
+
+If you embed the iframe yourself, listen for `postMessage` events from
+`https://alcor.exchange`:
+
+`{ source: "alcor-bridge", version: 1, type, data }`
+
+Type | Data
+---- | ----
+ready, sent, failed, finished, close | Same as the callbacks above
+resize | `{ height }`, the content height in pixels, so you can size the iframe
+
+Add `mode=inline` to the widget URL to hide its close button. Everything in the
+messages is public on-chain data.
+
+## Bridge API
+
+Read-only HTTP API of the bridge indexer, open to any origin (CORS `*`).
+
+`https://telos.alcor.exchange/api/bridge/v1/`
+
+Chains are named by id: `mainnet` (Ethereum), `telos-production` (Telos), `wax` (WAX).
+Amounts are integers in the asset's smallest unit. Divide by `10^precision`.
+
+## Routes
+
+```shell
+curl https://telos.alcor.exchange/api/bridge/v1/routes
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "routes": [
+    {
+      "symbol": "USDC",
+      "precision": 6,
+      "from": "mainnet",
+      "to": "wax",
+      "via": "telos-production",
+      "open": true,
+      "min": "5000000",
+      "max": "98735000000",
+      "how": {
+        "deposit": {
+          "token": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "telosTo": "hop.alcor",
+          "memo": "1181148696416462999:<account>|1:<your address>"
+        }
+      }
+    }
+  ]
+}
+```
+
+Every way each asset can travel right now, with its limits.
+
+### HTTP Request
+
+`GET https://telos.alcor.exchange/api/bridge/v1/routes`
+
+### Response
+
+Name | Type | Description
+--- | --- | ---
+symbol | string | Asset symbol
+precision | number | Decimals of `min` and `max`
+from, to | string | Chain ids of both ends
+via | string | Chain the transfer passes through, or `null` for a direct route
+open | boolean | Whether the route accepts transfers now
+min, max | string | Amount limits, in the smallest unit
+how | object | How the transfer is started. Used by the widget, and by your own code if you send the transaction yourself.
+
+## Chains
+
+```shell
+curl https://telos.alcor.exchange/api/bridge/v1/chains
+```
+
+> Relevant part of the response:
+
+```json
+{
+  "sources": [
+    {
+      "id": "mainnet",
+      "name": "Ethereum",
+      "chainId": 1,
+      "timing": {
+        "deposit": {
+          "seconds": 990,
+          "range": [768, 1212],
+          "measured": true,
+          "human": "about 17 min (13 min–20 min)"
+        }
+      }
+    }
+  ]
+}
+```
+
+State of each chain the bridge reaches, including how long a transfer from it
+currently takes. Timing is measured on recent transfers, not configured.
+
+### HTTP Request
+
+`GET https://telos.alcor.exchange/api/bridge/v1/chains`
+
+### Response
+
+Name | Type | Description
+--- | --- | ---
+sources[].id | string | Chain id
+sources[].name | string | Display name
+sources[].timing.deposit.seconds | number | Typical time for a deposit from this chain
+sources[].timing.deposit.range | number[] | Fastest and slowest recent times, in seconds
+sources[].timing.deposit.measured | boolean | `true` when measured on recent transfers
+sources[].timing.deposit.human | string | The same, phrased for people
+
+## Transfer status
+
+```shell
+curl https://telos.alcor.exchange/api/bridge/v1/hops/d:1:12
+curl "https://telos.alcor.exchange/api/bridge/v1/hops?party=alice.wam"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "key": "d:1:12",
+  "status": "delivered",
+  "progress": {
+    "stage": "delivered on WAX",
+    "percent": 100,
+    "etaSeconds": null
+  },
+  "from": { "chain": "mainnet", "address": "0x285202c8db763db06ab42e0705104cb7919ef95e" },
+  "to": { "chain": "wax", "recipient": "alice.wam" },
+  "back": { "chain": "mainnet", "recipient": "0x285202c8db763db06ab42e0705104cb7919ef95e" },
+  "deposit": {
+    "symbol": "USDC",
+    "amount": "50000000",
+    "precision": 6,
+    "src_tx": "0x0af8049909488c9ebb129dbc30db39ca0c7dc7009978756a8562e38970f92917"
+  }
+}
+```
+
+A transfer from Ethereum to WAX, by its key (the `key` from the widget's
+`onFinished`), or every transfer an account or address took part in. The list
+form returns `{ "hops": [ … ] }`, newest first.
+
+### HTTP Request
+
+`GET https://telos.alcor.exchange/api/bridge/v1/hops/<key>`
+
+`GET https://telos.alcor.exchange/api/bridge/v1/hops?party=<account or address>`
+
+### Status
+
+Status | Meaning
+------ | -------
+arriving | Locked on Ethereum, waiting for Ethereum to finalize
+sending | Passed through Telos, on its way to the destination
+delivered | Paid out to the recipient
+bounced | Refused by the destination, sent back
+returning | Coming back to the sender
+returned | Back with the sender
