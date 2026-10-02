@@ -1928,9 +1928,9 @@ In the popup the user's existing Alcor session and wallet connection carry over.
 
 Option | Required | Description
 ------ | -------- | -----------
-to | true | Chain the tokens land on: `wax`. The widget only offers destinations where the bridge pays out by itself.
-recipient | false | Receiving account. When given, it is **fixed** in the widget. Before anything is signed, the widget checks that the account exists.
-from | false | Chain to start on, `ethereum` by default.
+to | true | Chain the tokens land on: `wax`, `telos` or `ethereum`. Into WAX the bridge pays out by itself. A deposit to Telos ends with a **Collect** step signed on Telos, and a withdrawal to Ethereum with a **Release** step signed on Ethereum. The widget shows that button when its turn comes.
+recipient | false | Receiving account. When given, it is **fixed** in the widget. For WAX, the widget checks that the account exists before anything is signed.
+from | false | Chain to start on. Defaults to `ethereum`, or `telos` when `to` is Ethereum.
 token | false | `USDC`, `USDT`, `ETH`.
 amount | false | Prefilled amount, in token units.
 partner | false | Your id, for attribution.
