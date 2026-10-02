@@ -466,6 +466,29 @@
               </ul>
           </li>
           <li>
+            <a href="#bridge" class="toc-h1 toc-link" data-title="Bridge">Bridge</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#deposit-link" class="toc-h2 toc-link" data-title="Deposit link">Deposit link</a>
+                  </li>
+                  <li>
+                    <a href="#deposit-widget" class="toc-h2 toc-link" data-title="Deposit widget">Deposit widget</a>
+                  </li>
+                  <li>
+                    <a href="#bridge-api" class="toc-h2 toc-link" data-title="Bridge API">Bridge API</a>
+                  </li>
+                  <li>
+                    <a href="#routes" class="toc-h2 toc-link" data-title="Routes">Routes</a>
+                  </li>
+                  <li>
+                    <a href="#chains" class="toc-h2 toc-link" data-title="Chains">Chains</a>
+                  </li>
+                  <li>
+                    <a href="#transfer-status" class="toc-h2 toc-link" data-title="Transfer status">Transfer status</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
           </li>
       </ul>
@@ -495,6 +518,11 @@ WebSocket allows streaming for orderbook updates, new deals, and account events.
 <li>Market Data</li>
 <li>Liquidity pools Data</li>
 <li>WebSocket Stream</li>
+</ul></li>
+<li><strong>Bringing users&#39; funds in from other chains.</strong>
+
+<ul>
+<li><a href="#bridge">Bridge</a>: deposit link, embeddable widget and transfer status</li>
 </ul></li>
 </ul>
 
@@ -3546,6 +3574,484 @@ When CPU usage exceeds 70%, all hourly limits are reduced by 50%.
 </ul>
 
 <p>Any <code>transfer</code> actions where the recipient (<code>to</code>) is one of the Alcor contracts above are also allowed.</p>
+<h1 id='bridge'>Bridge</h1>
+<p>The Alcor bridge moves tokens between Ethereum, Telos and WAX. For partners the
+interesting route is <strong>Ethereum → WAX</strong>. The user signs one transaction on
+Ethereum and the bridge delivers the tokens to their WAX account by itself:
+there is nothing to claim and no WAX wallet involved. Small deposits usually
+arrive in 13–20 minutes. The live estimate is in <a href="#chains">Chains</a>.</p>
+
+<p>There are three ways to integrate it:</p>
+
+<ul>
+<li><strong><a href="#deposit-link">Deposit link</a></strong>: send users to the Alcor bridge page with the transfer prefilled.</li>
+<li><strong><a href="#deposit-widget">Deposit widget</a></strong>: open the bridge over your own page in a modal, popup or inline block.</li>
+<li><strong><a href="#bridge-api">Bridge API</a></strong>: read routes, limits, timing and transfer status yourself.</li>
+</ul>
+
+<aside class="notice">
+Supported assets are USDC, USDT and ETH from Ethereum. The authoritative list, with minimums and maximums, is always <a href="#routes">Routes</a>.
+</aside>
+<h2 id='deposit-link'>Deposit link</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>https://alcor.exchange/v/wax/bridge?from<span class="o">=</span>ethereum&amp;to<span class="o">=</span>wax&amp;recipient<span class="o">=</span>alice.wam&amp;token<span class="o">=</span>USDC&amp;amount<span class="o">=</span>50&amp;partner<span class="o">=</span>mygame&amp;return_url<span class="o">=</span>https://mygame.io/play
+</code></pre></div>
+<p>A plain URL to the bridge page with the transfer already filled in. No code is
+needed on your side.</p>
+<h3 id='query-parameters-8'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>from</td>
+<td><code>ethereum</code></td>
+<td>Chain to start on. The user can still change it.</td>
+</tr>
+<tr>
+<td>to</td>
+<td><code>wax</code></td>
+<td>Chain the tokens land on.</td>
+</tr>
+<tr>
+<td>recipient</td>
+<td><code>alice.wam</code></td>
+<td>Receiving account, prefilled. The user can edit it on this page.</td>
+</tr>
+<tr>
+<td>token</td>
+<td><code>USDC</code></td>
+<td>Asset, by the symbol the bridge lists (<code>USDC</code>, <code>USDT</code>, <code>ETH</code>).</td>
+</tr>
+<tr>
+<td>amount</td>
+<td><code>50</code></td>
+<td>Prefilled amount, in token units.</td>
+</tr>
+<tr>
+<td>partner</td>
+<td><code>mygame</code></td>
+<td>Your id, so the deposits you bring are attributed to you.</td>
+</tr>
+<tr>
+<td>return_url</td>
+<td><code>https://mygame.io/play</code></td>
+<td>Shows a &quot;← Back to mygame.io&quot; link. <code>https</code> only (<code>http</code> is allowed on <code>localhost</code>).</td>
+</tr>
+</tbody></table>
+
+<p>All parameters are optional. A malformed value is ignored rather than guessed at.</p>
+<h2 id='deposit-widget'>Deposit widget</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// &lt;script src="https://alcor.exchange/sdk/bridge/v1.js"&gt;&lt;/script&gt;</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">deposit</span><span class="dl">'</span><span class="p">).</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">AlcorBridge</span><span class="p">.</span><span class="nx">open</span><span class="p">({</span>
+    <span class="na">to</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wax</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">recipient</span><span class="p">:</span> <span class="dl">'</span><span class="s1">alice.wam</span><span class="dl">'</span><span class="p">,</span>   <span class="c1">// fixed: the user cannot change it</span>
+    <span class="na">token</span><span class="p">:</span> <span class="dl">'</span><span class="s1">USDC</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">amount</span><span class="p">:</span> <span class="dl">'</span><span class="s1">50</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">partner</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mygame</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">onSent</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">on its way</span><span class="dl">'</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">transactions</span><span class="p">)</span> <span class="p">},</span>
+    <span class="na">onFinished</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">outcome</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">delivered</span><span class="dl">'</span><span class="p">)</span> <span class="nx">refreshBalance</span><span class="p">()</span>
+    <span class="p">},</span>
+    <span class="na">onClose</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Without the script: embed the widget yourself</span>
+&lt;iframe <span class="nv">src</span><span class="o">=</span><span class="s2">"https://alcor.exchange/embed/bridge?to=wax&amp;recipient=alice.wam&amp;token=USDC&amp;partner=mygame&amp;mode=inline"</span>
+        <span class="nv">style</span><span class="o">=</span><span class="s2">"width:100%;max-width:480px;height:640px;border:0"</span><span class="o">&gt;</span>&lt;/iframe&gt;
+</code></pre></div>
+<p>Load <code>https://alcor.exchange/sdk/bridge/v1.js</code> and call one of its functions.
+The script is tiny and has no dependencies. The path is versioned:
+<code>v1.js</code> keeps its options and events for as long as anyone uses it.</p>
+<h3 id='functions'>Functions</h3>
+<table><thead>
+<tr>
+<th>Function</th>
+<th>Shows</th>
+<th>Returns</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>AlcorBridge.open(options)</code></td>
+<td>Modal over your page</td>
+<td><code>{ close() }</code></td>
+</tr>
+<tr>
+<td><code>AlcorBridge.popup(options)</code></td>
+<td>Separate window. Call it from a click handler.</td>
+<td><code>{ close() }</code>, or <code>null</code> if the popup was blocked</td>
+</tr>
+<tr>
+<td><code>AlcorBridge.mount(element, options)</code></td>
+<td>Inline iframe that grows with its content</td>
+<td><code>{ destroy() }</code></td>
+</tr>
+<tr>
+<td><code>AlcorBridge.url(options)</code></td>
+<td>Nothing. Returns the widget address for your own iframe or link.</td>
+<td><code>string</code></td>
+</tr>
+</tbody></table>
+
+<p>Browser extension wallets (MetaMask, Rabby) and WalletConnect work in all modes.
+In the popup the user&#39;s existing Alcor session and wallet connection carry over.</p>
+<h3 id='options'>Options</h3>
+<table><thead>
+<tr>
+<th>Option</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>to</td>
+<td>true</td>
+<td>Chain the tokens land on: <code>wax</code>. The widget only offers destinations where the bridge pays out by itself.</td>
+</tr>
+<tr>
+<td>recipient</td>
+<td>false</td>
+<td>Receiving account. When given, it is <strong>fixed</strong> in the widget. Before anything is signed, the widget checks that the account exists.</td>
+</tr>
+<tr>
+<td>from</td>
+<td>false</td>
+<td>Chain to start on, <code>ethereum</code> by default.</td>
+</tr>
+<tr>
+<td>token</td>
+<td>false</td>
+<td><code>USDC</code>, <code>USDT</code>, <code>ETH</code>.</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>false</td>
+<td>Prefilled amount, in token units.</td>
+</tr>
+<tr>
+<td>partner</td>
+<td>false</td>
+<td>Your id, for attribution.</td>
+</tr>
+<tr>
+<td>origin</td>
+<td>false</td>
+<td>Where the widget is served from. Defaults to the origin of the script itself.</td>
+</tr>
+<tr>
+<td>onReady, onSent, onFailed, onFinished, onClose</td>
+<td>false</td>
+<td>Event callbacks, see below.</td>
+</tr>
+</tbody></table>
+<h3 id='events'>Events</h3>
+<blockquote>
+<p><code>onSent</code> receives:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"direction"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hop"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"from_chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ethereum"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"to_chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USDC"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"50"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sender"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0x285202c8db763db06ab42e0705104cb7919ef95e"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alice.wam"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"partner"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mygame"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"embed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"iframe"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"transactions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w"> </span><span class="nl">"chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ethereum"</span><span class="p">,</span><span class="w"> </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Send"</span><span class="p">,</span><span class="w"> </span><span class="nl">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0x0af8…2917"</span><span class="p">,</span><span class="w"> </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://etherscan.io/tx/0x0af8…2917"</span><span class="w"> </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<blockquote>
+<p><code>onFinished</code> receives:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"d:1:12"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"outcome"</span><span class="p">:</span><span class="w"> </span><span class="s2">"delivered"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USDC"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"50"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"transactions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<table><thead>
+<tr>
+<th>Callback</th>
+<th>When</th>
+<th>Data</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>onReady</td>
+<td>The widget has loaded and is prefilled</td>
+<td><code>{ to, recipient }</code></td>
+</tr>
+<tr>
+<td>onSent</td>
+<td>The user signed and the transfer is on its way</td>
+<td>Transfer details and the first transaction</td>
+</tr>
+<tr>
+<td>onFailed</td>
+<td>The transfer could not be started, e.g. rejected in the wallet</td>
+<td>Transfer details plus <code>errorCode</code>, <code>error</code></td>
+</tr>
+<tr>
+<td>onFinished</td>
+<td>The transfer reached its end</td>
+<td><code>{ key, outcome, token, amount, transactions }</code></td>
+</tr>
+<tr>
+<td>onClose</td>
+<td>The user closed the widget</td>
+<td><code>{}</code></td>
+</tr>
+</tbody></table>
+
+<p><code>outcome</code> is <code>delivered</code>, or <code>returned</code> if the destination refused the tokens
+and they went back to the sender. <code>key</code> identifies the transfer in
+<a href="#transfer-status">Transfer status</a>.</p>
+
+<aside class="warning">
+Credit nothing in your app on <code>onSent</code>. Wait for <code>outcome: "delivered"</code>, or better, check the balance on chain. <code>onFinished</code> only fires while the widget is open. A transfer the user walked away from still completes, and you can follow it with <a href="#transfer-status">Transfer status</a>.
+</aside>
+<h3 id='messages'>Messages</h3>
+<p>If you embed the iframe yourself, listen for <code>postMessage</code> events from
+<code>https://alcor.exchange</code>:</p>
+
+<p><code>{ source: &quot;alcor-bridge&quot;, version: 1, type, data }</code></p>
+
+<table><thead>
+<tr>
+<th>Type</th>
+<th>Data</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ready, sent, failed, finished, close</td>
+<td>Same as the callbacks above</td>
+</tr>
+<tr>
+<td>resize</td>
+<td><code>{ height }</code>, the content height in pixels, so you can size the iframe</td>
+</tr>
+</tbody></table>
+
+<p>Add <code>mode=inline</code> to the widget URL to hide its close button. Everything in the
+messages is public on-chain data.</p>
+<h2 id='bridge-api'>Bridge API</h2>
+<p>Read-only HTTP API of the bridge indexer, open to any origin (CORS <code>*</code>).</p>
+
+<p><code>https://telos.alcor.exchange/api/bridge/v1/</code></p>
+
+<p>Chains are named by id: <code>mainnet</code> (Ethereum), <code>telos-production</code> (Telos), <code>wax</code> (WAX).
+Amounts are integers in the asset&#39;s smallest unit. Divide by <code>10^precision</code>.</p>
+<h2 id='routes'>Routes</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://telos.alcor.exchange/api/bridge/v1/routes
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"routes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USDC"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"precision"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"from"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mainnet"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"to"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"via"</span><span class="p">:</span><span class="w"> </span><span class="s2">"telos-production"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"open"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"min"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5000000"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"max"</span><span class="p">:</span><span class="w"> </span><span class="s2">"98735000000"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"how"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"deposit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"telosTo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hop.alcor"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"memo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1181148696416462999:&lt;account&gt;|1:&lt;your address&gt;"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Every way each asset can travel right now, with its limits.</p>
+<h3 id='http-request-23'>HTTP Request</h3>
+<p><code>GET https://telos.alcor.exchange/api/bridge/v1/routes</code></p>
+<h3 id='response-8'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>symbol</td>
+<td>string</td>
+<td>Asset symbol</td>
+</tr>
+<tr>
+<td>precision</td>
+<td>number</td>
+<td>Decimals of <code>min</code> and <code>max</code></td>
+</tr>
+<tr>
+<td>from, to</td>
+<td>string</td>
+<td>Chain ids of both ends</td>
+</tr>
+<tr>
+<td>via</td>
+<td>string</td>
+<td>Chain the transfer passes through, or <code>null</code> for a direct route</td>
+</tr>
+<tr>
+<td>open</td>
+<td>boolean</td>
+<td>Whether the route accepts transfers now</td>
+</tr>
+<tr>
+<td>min, max</td>
+<td>string</td>
+<td>Amount limits, in the smallest unit</td>
+</tr>
+<tr>
+<td>how</td>
+<td>object</td>
+<td>How the transfer is started. Used by the widget, and by your own code if you send the transaction yourself.</td>
+</tr>
+</tbody></table>
+<h2 id='chains'>Chains</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://telos.alcor.exchange/api/bridge/v1/chains
+</code></pre></div>
+<blockquote>
+<p>Relevant part of the response:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"sources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mainnet"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ethereum"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"chainId"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"timing"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"deposit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"seconds"</span><span class="p">:</span><span class="w"> </span><span class="mi">990</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"range"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">768</span><span class="p">,</span><span class="w"> </span><span class="mi">1212</span><span class="p">],</span><span class="w">
+          </span><span class="nl">"measured"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"human"</span><span class="p">:</span><span class="w"> </span><span class="s2">"about 17 min (13 min–20 min)"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>State of each chain the bridge reaches, including how long a transfer from it
+currently takes. Timing is measured on recent transfers, not configured.</p>
+<h3 id='http-request-24'>HTTP Request</h3>
+<p><code>GET https://telos.alcor.exchange/api/bridge/v1/chains</code></p>
+<h3 id='response-9'>Response</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>sources[].id</td>
+<td>string</td>
+<td>Chain id</td>
+</tr>
+<tr>
+<td>sources[].name</td>
+<td>string</td>
+<td>Display name</td>
+</tr>
+<tr>
+<td>sources[].timing.deposit.seconds</td>
+<td>number</td>
+<td>Typical time for a deposit from this chain</td>
+</tr>
+<tr>
+<td>sources[].timing.deposit.range</td>
+<td>number[]</td>
+<td>Fastest and slowest recent times, in seconds</td>
+</tr>
+<tr>
+<td>sources[].timing.deposit.measured</td>
+<td>boolean</td>
+<td><code>true</code> when measured on recent transfers</td>
+</tr>
+<tr>
+<td>sources[].timing.deposit.human</td>
+<td>string</td>
+<td>The same, phrased for people</td>
+</tr>
+</tbody></table>
+<h2 id='transfer-status'>Transfer status</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://telos.alcor.exchange/api/bridge/v1/hops/d:1:12
+curl <span class="s2">"https://telos.alcor.exchange/api/bridge/v1/hops?party=alice.wam"</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"d:1:12"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"delivered"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"progress"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"stage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"delivered on WAX"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"percent"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"etaSeconds"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"from"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mainnet"</span><span class="p">,</span><span class="w"> </span><span class="nl">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0x285202c8db763db06ab42e0705104cb7919ef95e"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"to"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wax"</span><span class="p">,</span><span class="w"> </span><span class="nl">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alice.wam"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"back"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"chain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mainnet"</span><span class="p">,</span><span class="w"> </span><span class="nl">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0x285202c8db763db06ab42e0705104cb7919ef95e"</span><span class="w"> </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"deposit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"symbol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USDC"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"50000000"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"precision"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"src_tx"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0x0af8049909488c9ebb129dbc30db39ca0c7dc7009978756a8562e38970f92917"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>A transfer from Ethereum to WAX, by its key (the <code>key</code> from the widget&#39;s
+<code>onFinished</code>), or every transfer an account or address took part in. The list
+form returns <code>{ &quot;hops&quot;: [ … ] }</code>, newest first.</p>
+<h3 id='http-request-25'>HTTP Request</h3>
+<p><code>GET https://telos.alcor.exchange/api/bridge/v1/hops/&lt;key&gt;</code></p>
+
+<p><code>GET https://telos.alcor.exchange/api/bridge/v1/hops?party=&lt;account or address&gt;</code></p>
+<h3 id='status-2'>Status</h3>
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>arriving</td>
+<td>Locked on Ethereum, waiting for Ethereum to finalize</td>
+</tr>
+<tr>
+<td>sending</td>
+<td>Passed through Telos, on its way to the destination</td>
+</tr>
+<tr>
+<td>delivered</td>
+<td>Paid out to the recipient</td>
+</tr>
+<tr>
+<td>bounced</td>
+<td>Refused by the destination, sent back</td>
+</tr>
+<tr>
+<td>returning</td>
+<td>Coming back to the sender</td>
+</tr>
+<tr>
+<td>returned</td>
+<td>Back with the sender</td>
+</tr>
+</tbody></table>
 <h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
