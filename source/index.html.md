@@ -1842,20 +1842,21 @@ Any `transfer` actions where the recipient (`to`) is one of the Alcor contracts 
 
 # Bridge
 
-The Alcor bridge moves tokens between Ethereum, Telos and WAX. For partners the
-interesting route is **Ethereum → WAX**. The user signs one transaction on
+The Alcor bridge moves tokens between Ethereum, BNB Smart Chain, Telos and WAX.
+For partners the interesting route is **Ethereum → WAX**. The user signs one transaction on
 Ethereum and the bridge delivers the tokens to their WAX account by itself:
 there is nothing to claim and no WAX wallet involved. Small deposits usually
 arrive in 13–20 minutes. The live estimate is in [Chains](#chains).
 
-There are three ways to integrate it:
+There are four ways to integrate it:
 
 * **[Deposit link](#deposit-link)**: send users to the Alcor bridge page with the transfer prefilled.
 * **[Deposit widget](#deposit-widget)**: open the bridge over your own page in a modal, popup or inline block.
 * **[Bridge API](#bridge-api)**: read routes, limits, timing and transfer status yourself.
+* **[Bridge contracts](#bridge-contracts)**: call the contracts from your own code or bot, with no Alcor page involved.
 
 <aside class="notice">
-Supported assets are USDC, USDT and ETH from Ethereum. The authoritative list, with minimums and maximums, is always <a href="#routes">Routes</a>.
+Supported assets are USDC, USDT and ETH from Ethereum, BNB from BNB Smart Chain and WAX from WAX. The authoritative list, with minimums and maximums, is always <a href="#routes">Routes</a>.
 </aside>
 
 ## Deposit link
@@ -2007,7 +2008,7 @@ Read-only HTTP API of the bridge indexer, open to any origin (CORS `*`).
 
 `https://telos.alcor.exchange/api/bridge/v1/`
 
-Chains are named by id: `mainnet` (Ethereum), `telos-production` (Telos), `wax` (WAX).
+Chains are named by id: `mainnet` (Ethereum), `bsc` (BNB Smart Chain), `telos-production` (Telos), `wax` (WAX).
 Amounts are integers in the asset's smallest unit. Divide by `10^precision`.
 
 ## Routes
@@ -2156,3 +2157,287 @@ delivered | Paid out to the recipient
 bounced | Refused by the destination, sent back
 returning | Coming back to the sender
 returned | Back with the sender
+
+## Bridge contracts
+
+Everything the widget does is a public contract call. Bots, wallets and
+exchanges can make the same calls themselves: no API key, no allowlist, no
+Alcor page involved.
+
+How the bridge is built:
+
+* **Telos holds the ledger**, `bridge.alcor`. Every route runs between Telos and one other chain. Ethereum ↔ WAX is two legs, joined by the `hop.alcor` contract on Telos.
+* **A deposit** is locked in the vault on its chain, proved on Telos and credited there. The bridge's relayer pushes the proof, so you send one transaction.
+* **A withdrawal** is burned on Telos and proved on the destination chain. Into WAX the relayer pays it out. Into Ethereum or BSC you send the proof yourself, in one transaction (see [Release on Ethereum or BSC](#release-on-ethereum-or-bsc)).
+* **Keys** name each leg: `d:<domain>:<nonce>` for a deposit, `w:<id>` for a withdrawal. Every endpoint of the [Bridge API](#bridge-api) takes them.
+
+<aside class="warning">
+Do not hardcode addresses in a bot. Read them from <a href="#chains">Chains</a> (<code>sources[].contracts</code>) and <a href="#routes">Routes</a> (<code>how</code>). They are listed below for orientation, as deployed on 2026-10-03.
+</aside>
+
+### Addresses
+
+Chain | Contract | Address | What it is
+----- | -------- | ------- | ----------
+Ethereum | `AlcorVault` | `0x3e447d533321ad6a8412f97034ac295a9ff8d858` | Deposits in, withdrawals paid out
+Ethereum | `AlcorWithdrawals` | `0x04fb700b93eb68cadd88d8e8d4dfe4857d5cb3c6` | Verifies a withdrawal proof and tells the vault to pay
+Ethereum | USDC, USDT | `0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48`, `0xdac17f958d2ee523a2206206994597c13d831ec7` | ETH is native: token `0x0000000000000000000000000000000000000000`
+BSC | `AlcorVault` | `0x53f18eaa8bf8099b5ba21bb7e11ed311b677690e` | Same contract as on Ethereum
+BSC | `AlcorWithdrawals` | `0x6132b4d02e02f1b378f0fc67c3d4f553eb76acb5` | Same contract as on Ethereum. BNB is native
+Telos | `bridge.alcor` | | The ledger: credits deposits, opens withdrawals
+Telos | `wrap.alcor` | | Bridged tokens on Telos: `USDC` and `USDT` (6 decimals), `ETH`, `BNB` and `WAX` (8)
+Telos | `hop.alcor` | | Carries a transfer between two chains through Telos
+WAX | `bridge.alcor` | | The vault on WAX: holds WAX, mints and burns the mirrors
+WAX | `wrap.alcor` | | Mirror tokens on WAX: `USDC`, `USDT`, `ETH`, `BNB`. WAX itself is `eosio.token`
+
+ABIs of the EVM contracts:
+[AlcorVault.json](https://api.alcor.exchange/abi/AlcorVault.json),
+[AlcorWithdrawals.json](https://api.alcor.exchange/abi/AlcorWithdrawals.json).
+The Antelope contracts publish theirs on chain (`get_abi`).
+
+### Domains and units
+
+Chain | Domain
+----- | ------
+Ethereum | `1`
+BSC | `56`
+WAX | `1181148696416462999` (first 8 bytes of the WAX chain id)
+
+The domain names the far chain in every memo and key. It is a decimal string
+in the API: the WAX one is larger than a JSON number holds exactly.
+
+**Amounts.** The ledger counts in Telos units (the token's precision on
+Telos). On an EVM chain, `amount = canonical × scale`: `scale` is `1` for USDC
+and USDT and `10^10` for ETH and BNB (18 decimals there, 8 on Telos). A
+remainder below `scale` is not taken: an ERC-20 deposit pulls only
+`canonical × scale`, and the excess of a native deposit is sent back in the
+same transaction.
+
+**Telos accounts on EVM.** `telosTo` is an Antelope account name packed into a
+`uint64`, the standard Antelope encoding. With
+[wharfkit](https://wharfkit.com): `BigInt(Name.from('hop.alcor').value.toString())`.
+
+## Deposit from Ethereum or BSC
+
+```javascript
+import { Contract, toUtf8Bytes, hexlify } from 'ethers'   // ethers v6
+import { Name } from '@wharfkit/antelope'
+
+const API = 'https://telos.alcor.exchange/api/bridge/v1'
+const vaultAbi = await (await fetch('https://api.alcor.exchange/abi/AlcorVault.json')).json()
+
+const { sources } = await (await fetch(`${API}/chains`)).json()
+const vault = new Contract(sources.find(s => s.id === 'mainnet').contracts.vault, vaultAbi, signer)
+
+const telosName = n => BigInt(Name.from(n).value.toString())
+const me = await signer.getAddress()
+
+// ETH to the WAX account alice.wam, back to me if WAX never pays
+const memo = hexlify(toUtf8Bytes(`1181148696416462999:alice.wam|1:${me}`))
+await vault.depositNative(telosName('hop.alcor'), me, 0, 0, memo, { value: 10n ** 16n })
+
+// 50 USDC to the Telos account alice (approve the vault first)
+const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+await vault.deposit(USDC, 50_000000n, telosName('alice'), me, 0, 0, '0x')
+```
+
+`deposit(token, amount, telosTo, refundTo, fillFee, filler, memo)` for an
+ERC-20, after `approve(vault, amount)`.
+`depositNative(telosTo, refundTo, fillFee, filler, memo)` payable, for ETH or BNB.
+
+Parameter | Type | Description
+--------- | ---- | -----------
+token | address | ERC-20 address from [Routes](#routes) (`how.deposit.token`)
+amount | uint256 | Raw token units
+telosTo | uint64 | Who receives on Telos: an account, or `hop.alcor` to go on to another chain
+refundTo | address | Where the deposit goes back if it cannot be delivered. Must not be zero
+fillFee, filler | uint64 | Reserved. Pass `0`
+memo | bytes | Up to 256 bytes, see below
+
+**Where it lands** depends on `telosTo` and `memo`:
+
+* **A Telos account, empty memo**: credited to that account on the ledger. The owner collects it with `bridge.alcor::claim` (see [Telos actions](#telos-actions)).
+* **A Telos account or contract, with a memo**: delivered to it as a `wrap.alcor` transfer carrying that memo. This is how a deposit pays a contract.
+* **To WAX**: `telosTo = hop.alcor`, memo `<WAX domain>:<WAX account>|<this chain's domain>:<your address>`. The first half is where it goes, the second where it comes back if WAX never pays it. The tokens arrive on WAX by themselves.
+
+<aside class="warning">
+Check that the WAX account exists before you deposit. The bridge cannot see WAX accounts: tokens sent to a missing one come back only after the withdrawal deadline, about a week.
+</aside>
+
+USDT on Ethereum refuses to change a non-zero allowance: set it to `0` first.
+
+A deposit the vault refuses reverts with a custom error from the ABI:
+`DepositsPaused`, `AssetDisabled`, `BelowMinimum(minDeposit)`, `CapExceeded`,
+`AmountTooSmall`, `MemoTooLong`, `ZeroAccount`, `ZeroRefundAddress`,
+`UseDepositNative` (the native coin through `deposit`).
+
+The `Deposit` event gives the key: `d:<chainId>:<nonce>`.
+
+## Deposit from WAX
+
+```shell
+# 100 USDC from WAX to the Telos account alice
+cleos -u https://wax.greymass.com push action wrap.alcor transfer \
+  '["bob.wam", "bridge.alcor", "100.000000 USDC", "alice"]' -p bob.wam
+
+# 100 USDC from WAX to an Ethereum address
+cleos -u https://wax.greymass.com push action wrap.alcor transfer \
+  '["bob.wam", "bridge.alcor", "100.000000 USDC", "hop.alcor:1:0x285202c8db763db06ab42e0705104cb7919ef95e|1181148696416462999:bob.wam"]' -p bob.wam
+```
+
+```javascript
+// wharfkit session on WAX
+await session.transact({
+  action: {
+    account: 'wrap.alcor', name: 'transfer',
+    authorization: [session.permissionLevel],
+    data: { from: session.actor, to: 'bridge.alcor', quantity: '100.000000 USDC', memo: 'alice' },
+  },
+})
+```
+
+A plain transfer to `bridge.alcor` on WAX. The token is the route's
+`antelopeToken` in [Chains](#chains): `eosio.token` for WAX, `wrap.alcor` for
+the mirrors. The memo says where it goes:
+
+* `<telos account>`: credited on Telos, collected with `claim`.
+* `<telos account>:<note>`: delivered to that account as a transfer with `<note>` as its memo.
+* `hop.alcor:<domain>:0x<address>|1181148696416462999:<your WAX account>`: lands on Ethereum (`1`) or BSC (`56`). The last leg is a withdrawal you release yourself, see [Release on Ethereum or BSC](#release-on-ethereum-or-bsc). The second half is where it comes back if that leg is never released.
+
+The deposit's key is `d:1181148696416462999:<nonce>`, the nonce from the
+vault's `deplog` action in your transaction.
+
+## Withdraw from Telos
+
+```shell
+# 50 USDT from Telos to an Ethereum address
+cleos -u https://mainnet.telos.net push action wrap.alcor transfer \
+  '["alice", "bridge.alcor", "50.000000 USDT", "1:0x285202c8db763db06ab42e0705104cb7919ef95e"]' -p alice
+
+# 10 WAX from Telos to the WAX account bob.wam
+cleos -u https://mainnet.telos.net push action wrap.alcor transfer \
+  '["alice", "bridge.alcor", "10.00000000 WAX", "1181148696416462999:bob.wam"]' -p alice
+```
+
+A transfer of a `wrap.alcor` token to `bridge.alcor` on Telos, with the
+destination in the memo: `<domain>:<recipient>[:<fee>]`.
+
+* **Into WAX** the relayer pays it out, in about two minutes. Nothing else to do.
+* **Into Ethereum or BSC** the withdrawal waits for you to release it on that chain, see the next section.
+* **`fee`** is optional, a whole number of Telos units out of the amount. It goes to whoever sends the release, so a recipient with no gas on the destination chain can still be paid by someone else. Without it, the fee is zero.
+
+The amount must not exceed `withdrawableNow` of the route in [Chains](#chains):
+each vault lets only so much out per day.
+
+To attach data for the receiver, use `wrap.alcor::withdraw(owner, quantity, domain, recipient, fee, memo)`
+instead of a transfer: `recipient` is the 20 address bytes, `fee` an asset in
+the same token, and `memo` up to 1024 bytes. The memo is proved with the
+amount and comes out in the `Released` event of `AlcorWithdrawals`.
+
+The withdrawal id is in the inline `bridge.alcor::wdlog` action of your
+transaction: `wdlog(id, domain, vault, token, recipient, amount, deadline, fee, memo)`.
+The key is `w:<id>`.
+
+## Release on Ethereum or BSC
+
+```javascript
+const wdAbi = await (await fetch('https://api.alcor.exchange/abi/AlcorWithdrawals.json')).json()
+const p = await (await fetch(`${API}/proofs/w:${id}`)).json()   // 404 until the proof exists
+
+if (p.track === 'light') {
+  // a root covering this burn is already trusted: ~145-180k gas
+  await new Contract(p.light.releaseTo, wdAbi, signer).release(p.light.release)
+} else {
+  // the root is submitted in the same transaction: ~2.6M gas
+  const s = p.hard.submitRoot
+  await new Contract(p.hard.releaseTo, wdAbi, signer)
+    .submitAndRelease(s.finality, s.bits, s.signature, s.policyKeys, s.pending, p.hard.release)
+}
+```
+
+A withdrawal to an EVM chain is paid out when someone sends its proof to
+`AlcorWithdrawals`. Anyone may send it: every field is checked against a root
+signed by Telos finalizers, and the tokens go only to the recipient the burn
+named.
+
+1. Wait until `GET /v1/transfers/w:<id>` shows `hasProof: true`, about a minute after the burn.
+2. Fetch `GET /v1/proofs/w:<id>`. Its objects are in Solidity struct order and carry both contract addresses. Pass them through unchanged.
+3. Send `release` on the `light` track or `submitAndRelease` on the `hard` track. One transaction either way.
+
+**Deadline.** The proof carries a `deadline`, about a week after the burn.
+Past it `release` reverts with `PastDeadline`. Send the same body to `expire` (or
+`submitAndExpire`) instead, and the tokens come back to their owner on Telos.
+
+**Daily limit.** A release over the vault's remaining daily allowance reverts
+with `OutflowLimited` and consumes nothing. The same proof works once the
+allowance refills, any time before the deadline.
+
+**Fees.** When the withdrawal set a `fee`, `msg.sender` receives it in the same
+transaction. `GET /v1/pending` lists every withdrawal ready to settle right now,
+with `action` saying `release` or `expire`.
+
+## Telos actions
+
+```shell
+# Collect a credited deposit
+cleos -u https://mainnet.telos.net push action bridge.alcor claim '["alice", "USDC"]' -p alice
+```
+
+Action | Who may call | What it does
+------ | ------------ | ------------
+`bridge.alcor::claim(owner, sym_code)` | The owner | Transfers a credited deposit to its owner. Table `claims`, scope = owner
+`bridge.alcor::forward(domain, nonce)` | Anyone | Delivers a deposit that carried a memo. The relayer does it; call it if you do not want to wait
+`bridge.alcor::bounce(domain, nonce)` | Anyone, an hour after arrival | Sends an undeliverable deposit back to its `refundTo`
+`hop.alcor::recover(id)` | Anyone | Sends a hop that came back from its destination on to its way-back address
+`<gateway>::credit` | Anyone, with a proof | Credits a deposit. The relayer does it. To do it yourself, send the `actions` of `GET /v1/proofs/d:<domain>:<nonce>` in one transaction
+
+Tables worth reading on `bridge.alcor`: `routes` (limits and backing per route),
+`claims` (credited, not yet collected), `wdraws` (withdrawals and their status).
+
+## Contract events
+
+Contract | Event | Meaning
+-------- | ----- | -------
+`AlcorVault` | `Deposit(token, from, amount, canonical, telosTo, nonce, refundTo, fillFee, filler, memo)` | Deposit locked. Key `d:<chainId>:<nonce>`
+`AlcorVault` | `Released(id, token, to, amount, feeTo, fee)` | Withdrawal `w:<id>` paid out, raw units
+`AlcorVault` | `Voided(id)` | Withdrawal `w:<id>` expired, refunded on Telos
+`AlcorWithdrawals` | `Released(id, token, to, amount, memo)` | The same payout with the Telos memo, in Telos units
+`AlcorWithdrawals` | `Expired(id)` | `expire` accepted
+WAX `bridge.alcor` | action `deplog(nonce, bridge, token_contract, token_symbol, from, raw, canonical, beneficiary, memo)` | Deposit from WAX. Key `d:1181148696416462999:<nonce>`
+Telos `bridge.alcor` | action `wdlog(id, domain, vault, token, recipient, amount, deadline, fee, memo)` | Withdrawal opened. Key `w:<id>`
+
+## Transfers and timing
+
+```shell
+curl https://telos.alcor.exchange/api/bridge/v1/transfers/d:56:1
+curl "https://telos.alcor.exchange/api/bridge/v1/transfers?address=0x285202c8db763db06ab42e0705104cb7919ef95e&limit=20"
+```
+
+`GET /v1/transfers/<key>` is one leg; `GET /v1/transfers?account=&address=&direction=&status=&limit=&before=`
+lists legs, newest first (`before` is the `src_time` of the last row, for
+paging). [Transfer status](#transfer-status) follows a whole Ethereum ↔ WAX
+journey instead. A leg moves through these statuses:
+
+```
+deposit      seen ──▶ provable ──▶ credited
+                               └─▶ parked ──▶ forwarded
+                                          └─▶ bounced
+withdrawal   burned ──▶ provable ──▶ released
+                                └─▶ expired ──▶ refunded
+```
+
+Typical times, measured on recent transfers. The live figures are in
+[Chains](#chains) under `timing`:
+
+From → to | Time | Your transactions
+--------- | ---- | -----------------
+Ethereum → Telos | about 17 min, Ethereum finality | Deposit
+Ethereum → WAX | about 20 min | Deposit
+BSC → Telos | about 30 s | Deposit
+BSC → WAX | about 3 min | Deposit
+WAX → Telos | about 50 s | Transfer
+Telos → WAX | about 2 min | Transfer
+Telos → Ethereum or BSC | about 1 min to the proof | Transfer, then release
+WAX → Ethereum or BSC | about 2–3 min to the proof | Transfer, then release
+
+Poll every 10–15 seconds: a transfer changes state on the scale of minutes.
