@@ -2164,6 +2164,10 @@ Everything the widget does is a public contract call. Bots, wallets and
 exchanges can make the same calls themselves: no API key, no allowlist, no
 Alcor page involved.
 
+<aside class="notice">
+The full guide for bots, with every chain's transaction, how to follow a transfer and what can go wrong: <a href="https://telos.alcor.exchange/api/bridge/docs/bot">telos.alcor.exchange/api/bridge/docs/bot</a>.
+</aside>
+
 How the bridge is built:
 
 * **Telos holds the ledger**, `bridge.alcor`. Every route runs between Telos and one other chain. Ethereum ↔ WAX is two legs, joined by the `hop.alcor` contract on Telos.
