@@ -1,0 +1,924 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "_lightClient",
+        "type": "address",
+        "internalType": "contract TelosLightClient"
+      },
+      {
+        "name": "_vault",
+        "type": "address",
+        "internalType": "contract IAlcorVault"
+      },
+      {
+        "name": "_bridge",
+        "type": "uint64",
+        "internalType": "uint64"
+      },
+      {
+        "name": "_log",
+        "type": "uint64",
+        "internalType": "uint64"
+      },
+      {
+        "name": "_active",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "activePerm",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "bridgeAccount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "domain",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "expire",
+    "inputs": [
+      {
+        "name": "p",
+        "type": "tuple",
+        "internalType": "struct AlcorWithdrawals.Proof",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "domain",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "deadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "fee",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "memo",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "recvSequence",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "witness",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "actionSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "actionPath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actionMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "majorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "minorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "blockNum",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "parentTimestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "finalityDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "treeSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "treePath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "finalityMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "lightClient",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract TelosLightClient"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "logAction",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "release",
+    "inputs": [
+      {
+        "name": "p",
+        "type": "tuple",
+        "internalType": "struct AlcorWithdrawals.Proof",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "domain",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "deadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "fee",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "memo",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "recvSequence",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "witness",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "actionSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "actionPath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actionMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "majorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "minorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "blockNum",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "parentTimestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "finalityDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "treeSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "treePath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "finalityMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "submitAndExpire",
+    "inputs": [
+      {
+        "name": "f",
+        "type": "tuple",
+        "internalType": "struct TelosLightClient.FinalityInputs",
+        "components": [
+          {
+            "name": "majorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "minorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "activeGeneration",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "lastPendingGeneration",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "finalityMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "lastPendingPolicyDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "lastPendingPolicyStart",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "reversibleBlocksMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "qcClaimBlockNum",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "qcClaimFinalityDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "qcClaimTimestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "baseDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      },
+      {
+        "name": "bits",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "signature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "policyKeys",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      },
+      {
+        "name": "pending",
+        "type": "tuple",
+        "internalType": "struct TelosLightClient.PendingQc",
+        "components": [
+          {
+            "name": "policy",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "bits",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "signature",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "p",
+        "type": "tuple",
+        "internalType": "struct AlcorWithdrawals.Proof",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "domain",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "deadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "fee",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "memo",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "recvSequence",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "witness",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "actionSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "actionPath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actionMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "majorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "minorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "blockNum",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "parentTimestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "finalityDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "treeSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "treePath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "finalityMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "submitAndRelease",
+    "inputs": [
+      {
+        "name": "f",
+        "type": "tuple",
+        "internalType": "struct TelosLightClient.FinalityInputs",
+        "components": [
+          {
+            "name": "majorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "minorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "activeGeneration",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "lastPendingGeneration",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "finalityMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "lastPendingPolicyDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "lastPendingPolicyStart",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "reversibleBlocksMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "qcClaimBlockNum",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "qcClaimFinalityDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "qcClaimTimestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "baseDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      },
+      {
+        "name": "bits",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "signature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "policyKeys",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      },
+      {
+        "name": "pending",
+        "type": "tuple",
+        "internalType": "struct TelosLightClient.PendingQc",
+        "components": [
+          {
+            "name": "policy",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "bits",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "signature",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "p",
+        "type": "tuple",
+        "internalType": "struct AlcorWithdrawals.Proof",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "domain",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "deadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "fee",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "memo",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "recvSequence",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "witness",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "actionSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "actionPath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actionMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "majorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "minorVersion",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "blockNum",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "parentTimestamp",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "finalityDigest",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "treeSiblings",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          },
+          {
+            "name": "treePath",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "finalityMroot",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "vault",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IAlcorVault"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "Expired",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Released",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
+      },
+      {
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      },
+      {
+        "name": "memo",
+        "type": "bytes",
+        "indexed": false,
+        "internalType": "bytes"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "ActionNotInBlock",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AmountOverflow",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "BeforeDeadline",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "BlockNotInRoot",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "BranchTooLong",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "FeeExceedsAmount",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PastDeadline",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UntrustedRoot",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "WrongDomain",
+    "inputs": []
+  }
+]

@@ -486,6 +486,30 @@
                   <li>
                     <a href="#transfer-status" class="toc-h2 toc-link" data-title="Transfer status">Transfer status</a>
                   </li>
+                  <li>
+                    <a href="#bridge-contracts" class="toc-h2 toc-link" data-title="Bridge contracts">Bridge contracts</a>
+                  </li>
+                  <li>
+                    <a href="#deposit-from-ethereum-or-bsc" class="toc-h2 toc-link" data-title="Deposit from Ethereum or BSC">Deposit from Ethereum or BSC</a>
+                  </li>
+                  <li>
+                    <a href="#deposit-from-wax" class="toc-h2 toc-link" data-title="Deposit from WAX">Deposit from WAX</a>
+                  </li>
+                  <li>
+                    <a href="#withdraw-from-telos" class="toc-h2 toc-link" data-title="Withdraw from Telos">Withdraw from Telos</a>
+                  </li>
+                  <li>
+                    <a href="#release-on-ethereum-or-bsc" class="toc-h2 toc-link" data-title="Release on Ethereum or BSC">Release on Ethereum or BSC</a>
+                  </li>
+                  <li>
+                    <a href="#telos-actions" class="toc-h2 toc-link" data-title="Telos actions">Telos actions</a>
+                  </li>
+                  <li>
+                    <a href="#contract-events" class="toc-h2 toc-link" data-title="Contract events">Contract events</a>
+                  </li>
+                  <li>
+                    <a href="#transfers-and-timing" class="toc-h2 toc-link" data-title="Transfers and timing">Transfers and timing</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -3575,22 +3599,23 @@ When CPU usage exceeds 70%, all hourly limits are reduced by 50%.
 
 <p>Any <code>transfer</code> actions where the recipient (<code>to</code>) is one of the Alcor contracts above are also allowed.</p>
 <h1 id='bridge'>Bridge</h1>
-<p>The Alcor bridge moves tokens between Ethereum, Telos and WAX. For partners the
-interesting route is <strong>Ethereum → WAX</strong>. The user signs one transaction on
+<p>The Alcor bridge moves tokens between Ethereum, BNB Smart Chain, Telos and WAX.
+For partners the interesting route is <strong>Ethereum → WAX</strong>. The user signs one transaction on
 Ethereum and the bridge delivers the tokens to their WAX account by itself:
 there is nothing to claim and no WAX wallet involved. Small deposits usually
 arrive in 13–20 minutes. The live estimate is in <a href="#chains">Chains</a>.</p>
 
-<p>There are three ways to integrate it:</p>
+<p>There are four ways to integrate it:</p>
 
 <ul>
 <li><strong><a href="#deposit-link">Deposit link</a></strong>: send users to the Alcor bridge page with the transfer prefilled.</li>
 <li><strong><a href="#deposit-widget">Deposit widget</a></strong>: open the bridge over your own page in a modal, popup or inline block.</li>
 <li><strong><a href="#bridge-api">Bridge API</a></strong>: read routes, limits, timing and transfer status yourself.</li>
+<li><strong><a href="#bridge-contracts">Bridge contracts</a></strong>: call the contracts from your own code or bot, with no Alcor page involved.</li>
 </ul>
 
 <aside class="notice">
-Supported assets are USDC, USDT and ETH from Ethereum. The authoritative list, with minimums and maximums, is always <a href="#routes">Routes</a>.
+Supported assets are USDC, USDT and ETH from Ethereum, BNB from BNB Smart Chain and WAX from WAX. The authoritative list, with minimums and maximums, is always <a href="#routes">Routes</a>.
 </aside>
 <h2 id='deposit-link'>Deposit link</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>https://alcor.exchange/v/wax/bridge?from<span class="o">=</span>ethereum&amp;to<span class="o">=</span>wax&amp;recipient<span class="o">=</span>alice.wam&amp;token<span class="o">=</span>USDC&amp;amount<span class="o">=</span>50&amp;partner<span class="o">=</span>mygame&amp;return_url<span class="o">=</span>https://mygame.io/play
 </code></pre></div>
@@ -3708,17 +3733,17 @@ In the popup the user&#39;s existing Alcor session and wallet connection carry o
 <tr>
 <td>to</td>
 <td>true</td>
-<td>Chain the tokens land on: <code>wax</code>. The widget only offers destinations where the bridge pays out by itself.</td>
+<td>Chain the tokens land on: <code>wax</code>, <code>telos</code> or <code>ethereum</code>. Into WAX the bridge pays out by itself. A deposit to Telos ends with a <strong>Collect</strong> step signed on Telos, and a withdrawal to Ethereum with a <strong>Release</strong> step signed on Ethereum. The widget shows that button when its turn comes.</td>
 </tr>
 <tr>
 <td>recipient</td>
 <td>false</td>
-<td>Receiving account. When given, it is <strong>fixed</strong> in the widget. Before anything is signed, the widget checks that the account exists.</td>
+<td>Receiving account. When given, it is <strong>fixed</strong> in the widget. For WAX, the widget checks that the account exists before anything is signed.</td>
 </tr>
 <tr>
 <td>from</td>
 <td>false</td>
-<td>Chain to start on, <code>ethereum</code> by default.</td>
+<td>Chain to start on. Defaults to <code>ethereum</code>, or <code>telos</code> when <code>to</code> is Ethereum.</td>
 </tr>
 <tr>
 <td>token</td>
@@ -3846,7 +3871,7 @@ messages is public on-chain data.</p>
 
 <p><code>https://telos.alcor.exchange/api/bridge/v1/</code></p>
 
-<p>Chains are named by id: <code>mainnet</code> (Ethereum), <code>telos-production</code> (Telos), <code>wax</code> (WAX).
+<p>Chains are named by id: <code>mainnet</code> (Ethereum), <code>bsc</code> (BNB Smart Chain), <code>telos-production</code> (Telos), <code>wax</code> (WAX).
 Amounts are integers in the asset&#39;s smallest unit. Divide by <code>10^precision</code>.</p>
 <h2 id='routes'>Routes</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://telos.alcor.exchange/api/bridge/v1/routes
 </code></pre></div>
@@ -4052,6 +4077,455 @@ form returns <code>{ &quot;hops&quot;: [ … ] }</code>, newest first.</p>
 <td>Back with the sender</td>
 </tr>
 </tbody></table>
+<h2 id='bridge-contracts'>Bridge contracts</h2>
+<p>Everything the widget does is a public contract call. Bots, wallets and
+exchanges can make the same calls themselves: no API key, no allowlist, no
+Alcor page involved.</p>
+
+<p>How the bridge is built:</p>
+
+<ul>
+<li><strong>Telos holds the ledger</strong>, <code>bridge.alcor</code>. Every route runs between Telos and one other chain. Ethereum ↔ WAX is two legs, joined by the <code>hop.alcor</code> contract on Telos.</li>
+<li><strong>A deposit</strong> is locked in the vault on its chain, proved on Telos and credited there. The bridge&#39;s relayer pushes the proof, so you send one transaction.</li>
+<li><strong>A withdrawal</strong> is burned on Telos and proved on the destination chain. Into WAX the relayer pays it out. Into Ethereum or BSC you send the proof yourself, in one transaction (see <a href="#release-on-ethereum-or-bsc">Release on Ethereum or BSC</a>).</li>
+<li><strong>Keys</strong> name each leg: <code>d:&lt;domain&gt;:&lt;nonce&gt;</code> for a deposit, <code>w:&lt;id&gt;</code> for a withdrawal. Every endpoint of the <a href="#bridge-api">Bridge API</a> takes them.</li>
+</ul>
+
+<aside class="warning">
+Do not hardcode addresses in a bot. Read them from <a href="#chains">Chains</a> (<code>sources[].contracts</code>) and <a href="#routes">Routes</a> (<code>how</code>). They are listed below for orientation, as deployed on 2026-10-03.
+</aside>
+<h3 id='addresses'>Addresses</h3>
+<table><thead>
+<tr>
+<th>Chain</th>
+<th>Contract</th>
+<th>Address</th>
+<th>What it is</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Ethereum</td>
+<td><code>AlcorVault</code></td>
+<td><code>0x3e447d533321ad6a8412f97034ac295a9ff8d858</code></td>
+<td>Deposits in, withdrawals paid out</td>
+</tr>
+<tr>
+<td>Ethereum</td>
+<td><code>AlcorWithdrawals</code></td>
+<td><code>0x04fb700b93eb68cadd88d8e8d4dfe4857d5cb3c6</code></td>
+<td>Verifies a withdrawal proof and tells the vault to pay</td>
+</tr>
+<tr>
+<td>Ethereum</td>
+<td>USDC, USDT</td>
+<td><code>0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48</code>, <code>0xdac17f958d2ee523a2206206994597c13d831ec7</code></td>
+<td>ETH is native: token <code>0x0000000000000000000000000000000000000000</code></td>
+</tr>
+<tr>
+<td>BSC</td>
+<td><code>AlcorVault</code></td>
+<td><code>0x53f18eaa8bf8099b5ba21bb7e11ed311b677690e</code></td>
+<td>Same contract as on Ethereum</td>
+</tr>
+<tr>
+<td>BSC</td>
+<td><code>AlcorWithdrawals</code></td>
+<td><code>0x6132b4d02e02f1b378f0fc67c3d4f553eb76acb5</code></td>
+<td>Same contract as on Ethereum. BNB is native</td>
+</tr>
+<tr>
+<td>Telos</td>
+<td><code>bridge.alcor</code></td>
+<td></td>
+<td>The ledger: credits deposits, opens withdrawals</td>
+</tr>
+<tr>
+<td>Telos</td>
+<td><code>wrap.alcor</code></td>
+<td></td>
+<td>Bridged tokens on Telos: <code>USDC</code> and <code>USDT</code> (6 decimals), <code>ETH</code>, <code>BNB</code> and <code>WAX</code> (8)</td>
+</tr>
+<tr>
+<td>Telos</td>
+<td><code>hop.alcor</code></td>
+<td></td>
+<td>Carries a transfer between two chains through Telos</td>
+</tr>
+<tr>
+<td>WAX</td>
+<td><code>bridge.alcor</code></td>
+<td></td>
+<td>The vault on WAX: holds WAX, mints and burns the mirrors</td>
+</tr>
+<tr>
+<td>WAX</td>
+<td><code>wrap.alcor</code></td>
+<td></td>
+<td>Mirror tokens on WAX: <code>USDC</code>, <code>USDT</code>, <code>ETH</code>, <code>BNB</code>. WAX itself is <code>eosio.token</code></td>
+</tr>
+</tbody></table>
+
+<p>ABIs of the EVM contracts:
+<a href="https://api.alcor.exchange/abi/AlcorVault.json">AlcorVault.json</a>,
+<a href="https://api.alcor.exchange/abi/AlcorWithdrawals.json">AlcorWithdrawals.json</a>.
+The Antelope contracts publish theirs on chain (<code>get_abi</code>).</p>
+<h3 id='domains-and-units'>Domains and units</h3>
+<table><thead>
+<tr>
+<th>Chain</th>
+<th>Domain</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Ethereum</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td>BSC</td>
+<td><code>56</code></td>
+</tr>
+<tr>
+<td>WAX</td>
+<td><code>1181148696416462999</code> (first 8 bytes of the WAX chain id)</td>
+</tr>
+</tbody></table>
+
+<p>The domain names the far chain in every memo and key. It is a decimal string
+in the API: the WAX one is larger than a JSON number holds exactly.</p>
+
+<p><strong>Amounts.</strong> The ledger counts in Telos units (the token&#39;s precision on
+Telos). On an EVM chain, <code>amount = canonical × scale</code>: <code>scale</code> is <code>1</code> for USDC
+and USDT and <code>10^10</code> for ETH and BNB (18 decimals there, 8 on Telos). A
+remainder below <code>scale</code> is not taken: an ERC-20 deposit pulls only
+<code>canonical × scale</code>, and the excess of a native deposit is sent back in the
+same transaction.</p>
+
+<p><strong>Telos accounts on EVM.</strong> <code>telosTo</code> is an Antelope account name packed into a
+<code>uint64</code>, the standard Antelope encoding. With
+<a href="https://wharfkit.com">wharfkit</a>: <code>BigInt(Name.from(&#39;hop.alcor&#39;).value.toString())</code>.</p>
+<h2 id='deposit-from-ethereum-or-bsc'>Deposit from Ethereum or BSC</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Contract</span><span class="p">,</span> <span class="nx">toUtf8Bytes</span><span class="p">,</span> <span class="nx">hexlify</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">ethers</span><span class="dl">'</span>   <span class="c1">// ethers v6</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Name</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@wharfkit/antelope</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">API</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">https://telos.alcor.exchange/api/bridge/v1</span><span class="dl">'</span>
+<span class="kd">const</span> <span class="nx">vaultAbi</span> <span class="o">=</span> <span class="k">await</span> <span class="p">(</span><span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://api.alcor.exchange/abi/AlcorVault.json</span><span class="dl">'</span><span class="p">)).</span><span class="nx">json</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="p">{</span> <span class="nx">sources</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="p">(</span><span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">API</span><span class="p">}</span><span class="s2">/chains`</span><span class="p">)).</span><span class="nx">json</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">vault</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Contract</span><span class="p">(</span><span class="nx">sources</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">s</span> <span class="o">=&gt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">mainnet</span><span class="dl">'</span><span class="p">).</span><span class="nx">contracts</span><span class="p">.</span><span class="nx">vault</span><span class="p">,</span> <span class="nx">vaultAbi</span><span class="p">,</span> <span class="nx">signer</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">telosName</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">=&gt;</span> <span class="nx">BigInt</span><span class="p">(</span><span class="nx">Name</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">n</span><span class="p">).</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">())</span>
+<span class="kd">const</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">signer</span><span class="p">.</span><span class="nx">getAddress</span><span class="p">()</span>
+
+<span class="c1">// ETH to the WAX account alice.wam, back to me if WAX never pays</span>
+<span class="kd">const</span> <span class="nx">memo</span> <span class="o">=</span> <span class="nx">hexlify</span><span class="p">(</span><span class="nx">toUtf8Bytes</span><span class="p">(</span><span class="s2">`1181148696416462999:alice.wam|1:</span><span class="p">${</span><span class="nx">me</span><span class="p">}</span><span class="s2">`</span><span class="p">))</span>
+<span class="k">await</span> <span class="nx">vault</span><span class="p">.</span><span class="nx">depositNative</span><span class="p">(</span><span class="nx">telosName</span><span class="p">(</span><span class="dl">'</span><span class="s1">hop.alcor</span><span class="dl">'</span><span class="p">),</span> <span class="nx">me</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">memo</span><span class="p">,</span> <span class="p">{</span> <span class="na">value</span><span class="p">:</span> <span class="mi">10</span><span class="nx">n</span> <span class="o">**</span> <span class="mi">16</span><span class="nx">n</span> <span class="p">})</span>
+
+<span class="c1">// 50 USDC to the Telos account alice (approve the vault first)</span>
+<span class="kd">const</span> <span class="nx">USDC</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48</span><span class="dl">'</span>
+<span class="k">await</span> <span class="nx">vault</span><span class="p">.</span><span class="nx">deposit</span><span class="p">(</span><span class="nx">USDC</span><span class="p">,</span> <span class="mi">50</span><span class="nx">_000000n</span><span class="p">,</span> <span class="nx">telosName</span><span class="p">(</span><span class="dl">'</span><span class="s1">alice</span><span class="dl">'</span><span class="p">),</span> <span class="nx">me</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="dl">'</span><span class="s1">0x</span><span class="dl">'</span><span class="p">)</span>
+</code></pre></div>
+<p><code>deposit(token, amount, telosTo, refundTo, fillFee, filler, memo)</code> for an
+ERC-20, after <code>approve(vault, amount)</code>.
+<code>depositNative(telosTo, refundTo, fillFee, filler, memo)</code> payable, for ETH or BNB.</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>token</td>
+<td>address</td>
+<td>ERC-20 address from <a href="#routes">Routes</a> (<code>how.deposit.token</code>)</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>uint256</td>
+<td>Raw token units</td>
+</tr>
+<tr>
+<td>telosTo</td>
+<td>uint64</td>
+<td>Who receives on Telos: an account, or <code>hop.alcor</code> to go on to another chain</td>
+</tr>
+<tr>
+<td>refundTo</td>
+<td>address</td>
+<td>Where the deposit goes back if it cannot be delivered. Must not be zero</td>
+</tr>
+<tr>
+<td>fillFee, filler</td>
+<td>uint64</td>
+<td>Reserved. Pass <code>0</code></td>
+</tr>
+<tr>
+<td>memo</td>
+<td>bytes</td>
+<td>Up to 256 bytes, see below</td>
+</tr>
+</tbody></table>
+
+<p><strong>Where it lands</strong> depends on <code>telosTo</code> and <code>memo</code>:</p>
+
+<ul>
+<li><strong>A Telos account, empty memo</strong>: credited to that account on the ledger. The owner collects it with <code>bridge.alcor::claim</code> (see <a href="#telos-actions">Telos actions</a>).</li>
+<li><strong>A Telos account or contract, with a memo</strong>: delivered to it as a <code>wrap.alcor</code> transfer carrying that memo. This is how a deposit pays a contract.</li>
+<li><strong>To WAX</strong>: <code>telosTo = hop.alcor</code>, memo <code>&lt;WAX domain&gt;:&lt;WAX account&gt;|&lt;this chain&#39;s domain&gt;:&lt;your address&gt;</code>. The first half is where it goes, the second where it comes back if WAX never pays it. The tokens arrive on WAX by themselves.</li>
+</ul>
+
+<aside class="warning">
+Check that the WAX account exists before you deposit. The bridge cannot see WAX accounts: tokens sent to a missing one come back only after the withdrawal deadline, about a week.
+</aside>
+
+<p>USDT on Ethereum refuses to change a non-zero allowance: set it to <code>0</code> first.</p>
+
+<p>A deposit the vault refuses reverts with a custom error from the ABI:
+<code>DepositsPaused</code>, <code>AssetDisabled</code>, <code>BelowMinimum(minDeposit)</code>, <code>CapExceeded</code>,
+<code>AmountTooSmall</code>, <code>MemoTooLong</code>, <code>ZeroAccount</code>, <code>ZeroRefundAddress</code>,
+<code>UseDepositNative</code> (the native coin through <code>deposit</code>).</p>
+
+<p>The <code>Deposit</code> event gives the key: <code>d:&lt;chainId&gt;:&lt;nonce&gt;</code>.</p>
+<h2 id='deposit-from-wax'>Deposit from WAX</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># 100 USDC from WAX to the Telos account alice</span>
+cleos <span class="nt">-u</span> https://wax.greymass.com push action wrap.alcor transfer <span class="se">\</span>
+  <span class="s1">'["bob.wam", "bridge.alcor", "100.000000 USDC", "alice"]'</span> <span class="nt">-p</span> bob.wam
+
+<span class="c"># 100 USDC from WAX to an Ethereum address</span>
+cleos <span class="nt">-u</span> https://wax.greymass.com push action wrap.alcor transfer <span class="se">\</span>
+  <span class="s1">'["bob.wam", "bridge.alcor", "100.000000 USDC", "hop.alcor:1:0x285202c8db763db06ab42e0705104cb7919ef95e|1181148696416462999:bob.wam"]'</span> <span class="nt">-p</span> bob.wam
+</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="c1">// wharfkit session on WAX</span>
+<span class="k">await</span> <span class="nx">session</span><span class="p">.</span><span class="nx">transact</span><span class="p">({</span>
+  <span class="na">action</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">account</span><span class="p">:</span> <span class="dl">'</span><span class="s1">wrap.alcor</span><span class="dl">'</span><span class="p">,</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">transfer</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">authorization</span><span class="p">:</span> <span class="p">[</span><span class="nx">session</span><span class="p">.</span><span class="nx">permissionLevel</span><span class="p">],</span>
+    <span class="na">data</span><span class="p">:</span> <span class="p">{</span> <span class="na">from</span><span class="p">:</span> <span class="nx">session</span><span class="p">.</span><span class="nx">actor</span><span class="p">,</span> <span class="na">to</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bridge.alcor</span><span class="dl">'</span><span class="p">,</span> <span class="na">quantity</span><span class="p">:</span> <span class="dl">'</span><span class="s1">100.000000 USDC</span><span class="dl">'</span><span class="p">,</span> <span class="na">memo</span><span class="p">:</span> <span class="dl">'</span><span class="s1">alice</span><span class="dl">'</span> <span class="p">},</span>
+  <span class="p">},</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>A plain transfer to <code>bridge.alcor</code> on WAX. The token is the route&#39;s
+<code>antelopeToken</code> in <a href="#chains">Chains</a>: <code>eosio.token</code> for WAX, <code>wrap.alcor</code> for
+the mirrors. The memo says where it goes:</p>
+
+<ul>
+<li><code>&lt;telos account&gt;</code>: credited on Telos, collected with <code>claim</code>.</li>
+<li><code>&lt;telos account&gt;:&lt;note&gt;</code>: delivered to that account as a transfer with <code>&lt;note&gt;</code> as its memo.</li>
+<li><code>hop.alcor:&lt;domain&gt;:0x&lt;address&gt;|1181148696416462999:&lt;your WAX account&gt;</code>: lands on Ethereum (<code>1</code>) or BSC (<code>56</code>). The last leg is a withdrawal you release yourself, see <a href="#release-on-ethereum-or-bsc">Release on Ethereum or BSC</a>. The second half is where it comes back if that leg is never released.</li>
+</ul>
+
+<p>The deposit&#39;s key is <code>d:1181148696416462999:&lt;nonce&gt;</code>, the nonce from the
+vault&#39;s <code>deplog</code> action in your transaction.</p>
+<h2 id='withdraw-from-telos'>Withdraw from Telos</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># 50 USDT from Telos to an Ethereum address</span>
+cleos <span class="nt">-u</span> https://mainnet.telos.net push action wrap.alcor transfer <span class="se">\</span>
+  <span class="s1">'["alice", "bridge.alcor", "50.000000 USDT", "1:0x285202c8db763db06ab42e0705104cb7919ef95e"]'</span> <span class="nt">-p</span> alice
+
+<span class="c"># 10 WAX from Telos to the WAX account bob.wam</span>
+cleos <span class="nt">-u</span> https://mainnet.telos.net push action wrap.alcor transfer <span class="se">\</span>
+  <span class="s1">'["alice", "bridge.alcor", "10.00000000 WAX", "1181148696416462999:bob.wam"]'</span> <span class="nt">-p</span> alice
+</code></pre></div>
+<p>A transfer of a <code>wrap.alcor</code> token to <code>bridge.alcor</code> on Telos, with the
+destination in the memo: <code>&lt;domain&gt;:&lt;recipient&gt;[:&lt;fee&gt;]</code>.</p>
+
+<ul>
+<li><strong>Into WAX</strong> the relayer pays it out, in about two minutes. Nothing else to do.</li>
+<li><strong>Into Ethereum or BSC</strong> the withdrawal waits for you to release it on that chain, see the next section.</li>
+<li><strong><code>fee</code></strong> is optional, a whole number of Telos units out of the amount. It goes to whoever sends the release, so a recipient with no gas on the destination chain can still be paid by someone else. Without it, the fee is zero.</li>
+</ul>
+
+<p>The amount must not exceed <code>withdrawableNow</code> of the route in <a href="#chains">Chains</a>:
+each vault lets only so much out per day.</p>
+
+<p>To attach data for the receiver, use <code>wrap.alcor::withdraw(owner, quantity, domain, recipient, fee, memo)</code>
+instead of a transfer: <code>recipient</code> is the 20 address bytes, <code>fee</code> an asset in
+the same token, and <code>memo</code> up to 1024 bytes. The memo is proved with the
+amount and comes out in the <code>Released</code> event of <code>AlcorWithdrawals</code>.</p>
+
+<p>The withdrawal id is in the inline <code>bridge.alcor::wdlog</code> action of your
+transaction: <code>wdlog(id, domain, vault, token, recipient, amount, deadline, fee, memo)</code>.
+The key is <code>w:&lt;id&gt;</code>.</p>
+<h2 id='release-on-ethereum-or-bsc'>Release on Ethereum or BSC</h2><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">wdAbi</span> <span class="o">=</span> <span class="k">await</span> <span class="p">(</span><span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://api.alcor.exchange/abi/AlcorWithdrawals.json</span><span class="dl">'</span><span class="p">)).</span><span class="nx">json</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">await</span> <span class="p">(</span><span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">API</span><span class="p">}</span><span class="s2">/proofs/w:</span><span class="p">${</span><span class="nx">id</span><span class="p">}</span><span class="s2">`</span><span class="p">)).</span><span class="nx">json</span><span class="p">()</span>   <span class="c1">// 404 until the proof exists</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">track</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">light</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// a root covering this burn is already trusted: ~145-180k gas</span>
+  <span class="k">await</span> <span class="k">new</span> <span class="nx">Contract</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">light</span><span class="p">.</span><span class="nx">releaseTo</span><span class="p">,</span> <span class="nx">wdAbi</span><span class="p">,</span> <span class="nx">signer</span><span class="p">).</span><span class="nx">release</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">light</span><span class="p">.</span><span class="nx">release</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="c1">// the root is submitted in the same transaction: ~2.6M gas</span>
+  <span class="kd">const</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">hard</span><span class="p">.</span><span class="nx">submitRoot</span>
+  <span class="k">await</span> <span class="k">new</span> <span class="nx">Contract</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">hard</span><span class="p">.</span><span class="nx">releaseTo</span><span class="p">,</span> <span class="nx">wdAbi</span><span class="p">,</span> <span class="nx">signer</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">submitAndRelease</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">finality</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">bits</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">signature</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">policyKeys</span><span class="p">,</span> <span class="nx">s</span><span class="p">.</span><span class="nx">pending</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">hard</span><span class="p">.</span><span class="nx">release</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>A withdrawal to an EVM chain is paid out when someone sends its proof to
+<code>AlcorWithdrawals</code>. Anyone may send it: every field is checked against a root
+signed by Telos finalizers, and the tokens go only to the recipient the burn
+named.</p>
+
+<ol>
+<li>Wait until <code>GET /v1/transfers/w:&lt;id&gt;</code> shows <code>hasProof: true</code>, about a minute after the burn.</li>
+<li>Fetch <code>GET /v1/proofs/w:&lt;id&gt;</code>. Its objects are in Solidity struct order and carry both contract addresses. Pass them through unchanged.</li>
+<li>Send <code>release</code> on the <code>light</code> track or <code>submitAndRelease</code> on the <code>hard</code> track. One transaction either way.</li>
+</ol>
+
+<p><strong>Deadline.</strong> The proof carries a <code>deadline</code>, about a week after the burn.
+Past it <code>release</code> reverts with <code>PastDeadline</code>. Send the same body to <code>expire</code> (or
+<code>submitAndExpire</code>) instead, and the tokens come back to their owner on Telos.</p>
+
+<p><strong>Daily limit.</strong> A release over the vault&#39;s remaining daily allowance reverts
+with <code>OutflowLimited</code> and consumes nothing. The same proof works once the
+allowance refills, any time before the deadline.</p>
+
+<p><strong>Fees.</strong> When the withdrawal set a <code>fee</code>, <code>msg.sender</code> receives it in the same
+transaction. <code>GET /v1/pending</code> lists every withdrawal ready to settle right now,
+with <code>action</code> saying <code>release</code> or <code>expire</code>.</p>
+<h2 id='telos-actions'>Telos actions</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Collect a credited deposit</span>
+cleos <span class="nt">-u</span> https://mainnet.telos.net push action bridge.alcor claim <span class="s1">'["alice", "USDC"]'</span> <span class="nt">-p</span> alice
+</code></pre></div>
+<table><thead>
+<tr>
+<th>Action</th>
+<th>Who may call</th>
+<th>What it does</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>bridge.alcor::claim(owner, sym_code)</code></td>
+<td>The owner</td>
+<td>Transfers a credited deposit to its owner. Table <code>claims</code>, scope = owner</td>
+</tr>
+<tr>
+<td><code>bridge.alcor::forward(domain, nonce)</code></td>
+<td>Anyone</td>
+<td>Delivers a deposit that carried a memo. The relayer does it; call it if you do not want to wait</td>
+</tr>
+<tr>
+<td><code>bridge.alcor::bounce(domain, nonce)</code></td>
+<td>Anyone, an hour after arrival</td>
+<td>Sends an undeliverable deposit back to its <code>refundTo</code></td>
+</tr>
+<tr>
+<td><code>hop.alcor::recover(id)</code></td>
+<td>Anyone</td>
+<td>Sends a hop that came back from its destination on to its way-back address</td>
+</tr>
+<tr>
+<td><code>&lt;gateway&gt;::credit</code></td>
+<td>Anyone, with a proof</td>
+<td>Credits a deposit. The relayer does it. To do it yourself, send the <code>actions</code> of <code>GET /v1/proofs/d:&lt;domain&gt;:&lt;nonce&gt;</code> in one transaction</td>
+</tr>
+</tbody></table>
+
+<p>Tables worth reading on <code>bridge.alcor</code>: <code>routes</code> (limits and backing per route),
+<code>claims</code> (credited, not yet collected), <code>wdraws</code> (withdrawals and their status).</p>
+<h2 id='contract-events'>Contract events</h2>
+<table><thead>
+<tr>
+<th>Contract</th>
+<th>Event</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>AlcorVault</code></td>
+<td><code>Deposit(token, from, amount, canonical, telosTo, nonce, refundTo, fillFee, filler, memo)</code></td>
+<td>Deposit locked. Key <code>d:&lt;chainId&gt;:&lt;nonce&gt;</code></td>
+</tr>
+<tr>
+<td><code>AlcorVault</code></td>
+<td><code>Released(id, token, to, amount, feeTo, fee)</code></td>
+<td>Withdrawal <code>w:&lt;id&gt;</code> paid out, raw units</td>
+</tr>
+<tr>
+<td><code>AlcorVault</code></td>
+<td><code>Voided(id)</code></td>
+<td>Withdrawal <code>w:&lt;id&gt;</code> expired, refunded on Telos</td>
+</tr>
+<tr>
+<td><code>AlcorWithdrawals</code></td>
+<td><code>Released(id, token, to, amount, memo)</code></td>
+<td>The same payout with the Telos memo, in Telos units</td>
+</tr>
+<tr>
+<td><code>AlcorWithdrawals</code></td>
+<td><code>Expired(id)</code></td>
+<td><code>expire</code> accepted</td>
+</tr>
+<tr>
+<td>WAX <code>bridge.alcor</code></td>
+<td>action <code>deplog(nonce, bridge, token_contract, token_symbol, from, raw, canonical, beneficiary, memo)</code></td>
+<td>Deposit from WAX. Key <code>d:1181148696416462999:&lt;nonce&gt;</code></td>
+</tr>
+<tr>
+<td>Telos <code>bridge.alcor</code></td>
+<td>action <code>wdlog(id, domain, vault, token, recipient, amount, deadline, fee, memo)</code></td>
+<td>Withdrawal opened. Key <code>w:&lt;id&gt;</code></td>
+</tr>
+</tbody></table>
+<h2 id='transfers-and-timing'>Transfers and timing</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl https://telos.alcor.exchange/api/bridge/v1/transfers/d:56:1
+curl <span class="s2">"https://telos.alcor.exchange/api/bridge/v1/transfers?address=0x285202c8db763db06ab42e0705104cb7919ef95e&amp;limit=20"</span>
+</code></pre></div>
+<p><code>GET /v1/transfers/&lt;key&gt;</code> is one leg; <code>GET /v1/transfers?account=&amp;address=&amp;direction=&amp;status=&amp;limit=&amp;before=</code>
+lists legs, newest first (<code>before</code> is the <code>src_time</code> of the last row, for
+paging). <a href="#transfer-status">Transfer status</a> follows a whole Ethereum ↔ WAX
+journey instead. A leg moves through these statuses:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>deposit      seen ──▶ provable ──▶ credited
+                               └─▶ parked ──▶ forwarded
+                                          └─▶ bounced
+withdrawal   burned ──▶ provable ──▶ released
+                                └─▶ expired ──▶ refunded
+</code></pre></div>
+<p>Typical times, measured on recent transfers. The live figures are in
+<a href="#chains">Chains</a> under <code>timing</code>:</p>
+
+<table><thead>
+<tr>
+<th>From → to</th>
+<th>Time</th>
+<th>Your transactions</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Ethereum → Telos</td>
+<td>about 17 min, Ethereum finality</td>
+<td>Deposit</td>
+</tr>
+<tr>
+<td>Ethereum → WAX</td>
+<td>about 20 min</td>
+<td>Deposit</td>
+</tr>
+<tr>
+<td>BSC → Telos</td>
+<td>about 30 s</td>
+<td>Deposit</td>
+</tr>
+<tr>
+<td>BSC → WAX</td>
+<td>about 3 min</td>
+<td>Deposit</td>
+</tr>
+<tr>
+<td>WAX → Telos</td>
+<td>about 50 s</td>
+<td>Transfer</td>
+</tr>
+<tr>
+<td>Telos → WAX</td>
+<td>about 2 min</td>
+<td>Transfer</td>
+</tr>
+<tr>
+<td>Telos → Ethereum or BSC</td>
+<td>about 1 min to the proof</td>
+<td>Transfer, then release</td>
+</tr>
+<tr>
+<td>WAX → Ethereum or BSC</td>
+<td>about 2–3 min to the proof</td>
+<td>Transfer, then release</td>
+</tr>
+</tbody></table>
+
+<p>Poll every 10–15 seconds: a transfer changes state on the scale of minutes.</p>
 <h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
